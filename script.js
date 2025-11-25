@@ -282,39 +282,34 @@ function fallbackCopy(text) {
 
 // 카카오페이 송금하기
 function sendKakaoPay(bankName, accountNumber, accountHolder) {
-    // 은행 코드 매핑 (카카오페이에서 사용하는 은행 코드)
-    const bankCodes = {
-        '우리은행': '020',
-        '신한은행': '088',
-        '농협': '011',
-        'NH농협은행': '011',
-        '국민은행': '004',
-        '하나은행': '081',
-        '기업은행': '003',
-        '새마을금고': '045',
-        '신협': '048',
-        '우체국': '071'
-    };
+    // 계좌정보 복사
+    const accountInfo = `${bankName} ${accountNumber}`;
 
-    const bankCode = bankCodes[bankName] || '';
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(accountInfo).then(() => {
+            showToast('계좌정보가 복사되었습니다');
+        }).catch(err => {
+            console.error('복사 실패:', err);
+        });
+    }
 
-    // 카카오페이 송금 URL (계좌번호만 전달, 금액은 사용자가 입력)
-    // 모바일 앱 scheme
-    const kakaopayUrl = `kakaopay://money/send?bank=${bankCode}&account=${accountNumber}&name=${encodeURIComponent(accountHolder)}`;
+    // 카카오페이 앱 실행
+    // 카카오톡 > 더보기 > Pay > 송금 화면으로 이동
+    const kakaoPayUrl = 'kakaotalk://kakaopay/home';
 
-    // 앱으로 이동 시도
-    window.location.href = kakaopayUrl;
+    // 앱 실행 시도
+    const appOpenAttempt = window.open(kakaoPayUrl, '_self');
 
-    // 1초 후에도 앱이 안 열렸다면 웹으로 이동
+    // 앱이 안 열릴 경우 대비
     setTimeout(() => {
-        // 카카오페이 웹 송금 페이지로 이동 (계좌정보는 클립보드에 복사)
-        const accountInfo = `${bankName} ${accountNumber} (${accountHolder})`;
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(accountInfo).then(() => {
-                showToast('계좌정보가 복사되었습니다. 카카오페이 앱을 설치해주세요.');
-            });
+        if (!document.hidden) {
+            // 앱이 실행되지 않은 경우
+            if (confirm(`${accountInfo}\n${accountHolder}\n\n계좌정보가 복사되었습니다.\n카카오페이를 실행하시겠습니까?`)) {
+                // 카카오톡 실행 (카카오페이는 카카오톡 안에 있음)
+                window.location.href = 'kakaotalk://';
+            }
         }
-    }, 1000);
+    }, 500);
 }
 
 // 방명록 관련 함수
