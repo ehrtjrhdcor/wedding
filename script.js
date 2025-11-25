@@ -280,6 +280,43 @@ function fallbackCopy(text) {
     document.body.removeChild(textArea);
 }
 
+// 카카오페이 송금하기
+function sendKakaoPay(bankName, accountNumber, accountHolder) {
+    // 은행 코드 매핑 (카카오페이에서 사용하는 은행 코드)
+    const bankCodes = {
+        '우리은행': '020',
+        '신한은행': '088',
+        '농협': '011',
+        'NH농협은행': '011',
+        '국민은행': '004',
+        '하나은행': '081',
+        '기업은행': '003',
+        '새마을금고': '045',
+        '신협': '048',
+        '우체국': '071'
+    };
+
+    const bankCode = bankCodes[bankName] || '';
+
+    // 카카오페이 송금 URL (계좌번호만 전달, 금액은 사용자가 입력)
+    // 모바일 앱 scheme
+    const kakaopayUrl = `kakaopay://money/send?bank=${bankCode}&account=${accountNumber}&name=${encodeURIComponent(accountHolder)}`;
+
+    // 앱으로 이동 시도
+    window.location.href = kakaopayUrl;
+
+    // 1초 후에도 앱이 안 열렸다면 웹으로 이동
+    setTimeout(() => {
+        // 카카오페이 웹 송금 페이지로 이동 (계좌정보는 클립보드에 복사)
+        const accountInfo = `${bankName} ${accountNumber} (${accountHolder})`;
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(accountInfo).then(() => {
+                showToast('계좌정보가 복사되었습니다. 카카오페이 앱을 설치해주세요.');
+            });
+        }
+    }, 1000);
+}
+
 // 방명록 관련 함수
 function focusGuestbook() {
     showGuestbookForm();
