@@ -195,9 +195,8 @@ function openTmap() {
 function openKakaoNavi() {
     // 순천아모르웨딩컨벤션 좌표
     const placeName = '순천아모르웨딩컨벤션';
-    const latitude = 34.9471;  // 위도
-    const longitude = 127.4647; // 경도
-
+    const latitude = 34.982261;  // 위도
+    const longitude = 127.518579; // 경도
     // 카카오내비 앱 스킴 (좌표로 목적지 설정)
     const kakaoNaviUrl = `kakaomap://route?ep=${latitude},${longitude}&by=CAR`;
 
@@ -854,7 +853,7 @@ function initNaverMap() {
 
     // 순천아모르웨딩컨벤션 좌표 (전남 순천시 서면 압곡길 94)
     // 좌표: 위도(latitude), 경도(longitude) 순서
-    const weddingLocation = new naver.maps.LatLng(34.982951, 127.518891);
+    const weddingLocation = new naver.maps.LatLng(34.982261, 127.518579);
 
     // 지도 옵션
     const mapOptions = {
