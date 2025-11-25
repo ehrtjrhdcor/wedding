@@ -1098,7 +1098,7 @@ function shareKakao() {
         objectType: 'feed',
         content: {
             title: '장원석 ❤️ 김한비 결혼합니다',
-            description: '2025년 2월 8일 토요일 오후 1시\n더컨벤션 웨딩홀 5층 그레이스홀',
+            description: '2025년 1월 11일 토요일 오후 1시\n순천아모르웨딩컨벤션 .... 여기는 임의로 입력가능',
             imageUrl: 'https://ehrtjrhdcor.github.io/wedding/images/1.png',
             link: {
                 mobileWebUrl: 'https://ehrtjrhdcor.github.io/wedding/',
