@@ -11,6 +11,29 @@
     <!-- 네이버 지도 API -->
     <!-- <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=2wtt0c80a1"></script> -->
     <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=2wtt0c80a1"></script>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, deleteDoc, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA2BZV0aIc7VjmHY4oats8vNZtuyVu9S50",
+            authDomain: "wedding-27c94.firebaseapp.com",
+            projectId: "wedding-27c94",
+            storageBucket: "wedding-27c94.firebasestorage.app",
+            messagingSenderId: "406271324350",
+            appId: "1:406271324350:web:306c638c3f8070e5bb2eef",
+            measurementId: "G-TGGJ6LBN4H"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 전역으로 사용할 수 있도록 window에 저장
+        window.db = db;
+        window.firestoreModules = { collection, addDoc, query, orderBy, onSnapshot, deleteDoc, doc, updateDoc };
+    </script>
 </head>
 <body>
     <!-- 메인 헤더 -->

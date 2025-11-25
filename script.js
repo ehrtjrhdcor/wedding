@@ -2,11 +2,14 @@
 let currentImageIndex = 0;
 const totalImages = 9;
 
-// 방명록 수정 모드
-let editingMessageIndex = null;
+// 방명록 수정 모드 (Firebase용 - messageId 저장)
+let editingMessageId = null;
 
 // 방명록 표시 개수 제한
 let displayedMessageCount = 3;
+
+// Firebase 방명록 전체 데이터 (전역 저장)
+window.allMessages = [];
 const galleryImages = [
     'images/4.jpg',
     'images/10.jpg',
@@ -320,14 +323,14 @@ function focusGuestbook() {
 function showGuestbookForm() {
     const form = document.getElementById('guestbookForm');
     const submitButton = form ? form.querySelector('button') : null;
-    
+
     if (form) {
         const isHidden = form.style.display === 'none';
         form.style.display = isHidden ? 'block' : 'none';
-        
+
         // 새로 작성할 때는 수정 모드 해제 및 버튼 텍스트 원래대로
         if (isHidden) {
-            editingMessageIndex = null;
+            editingMessageId = null;
             if (submitButton) {
                 submitButton.textContent = '메시지 남기기';
             }
@@ -343,8 +346,8 @@ function showGuestbookForm() {
 }
 
 
-// 방명록 메시지 저장 및 불러오기
-function submitMessage() {
+// 방명록 메시지 저장 및 불러오기 (Firebase)
+async function submitMessage() {
     const nameInput = document.getElementById('guestName');
     const passwordInput = document.getElementById('guestPassword');
     const messageInput = document.getElementById('guestMessage');
@@ -368,126 +371,138 @@ function submitMessage() {
         return;
     }
 
-    let messages = JSON.parse(localStorage.getItem('weddingMessages') || '[]');
-    
-    // 수정 모드인 경우
-    if (editingMessageIndex !== null && editingMessageIndex < messages.length) {
-        messages[editingMessageIndex] = {
-            name: name,
-            password: password,
-            message: message,
-            date: messages[editingMessageIndex].date // 원래 날짜 유지
-        };
-        localStorage.setItem('weddingMessages', JSON.stringify(messages));
-        editingMessageIndex = null;
-        showToast('메시지가 수정되었습니다');
-    } else {
-        // 새 메시지 작성
-        const messageData = {
-            name: name,
-            password: password,
-            message: message,
-            date: new Date().toISOString()
-        };
-        messages.unshift(messageData);
-        localStorage.setItem('weddingMessages', JSON.stringify(messages));
-        showToast('메시지가 등록되었습니다');
-    }
+    const { collection, addDoc, updateDoc, doc } = window.firestoreModules;
 
-    // 입력 필드 초기화
-    nameInput.value = '';
-    passwordInput.value = '';
-    messageInput.value = '';
+    try {
+        // 수정 모드인 경우
+        if (editingMessageId !== null) {
+            const messageRef = doc(window.db, 'guestbook', editingMessageId);
+            await updateDoc(messageRef, {
+                name: name,
+                password: password,
+                message: message
+            });
+            editingMessageId = null;
+            showToast('메시지가 수정되었습니다');
+        } else {
+            // 새 메시지 작성
+            const messageData = {
+                name: name,
+                password: password,
+                message: message,
+                date: new Date().toISOString()
+            };
+            await addDoc(collection(window.db, 'guestbook'), messageData);
+            showToast('메시지가 등록되었습니다');
+        }
 
-    // 폼 숨기기 및 버튼 텍스트 원래대로
-    const form = document.getElementById('guestbookForm');
-    const submitButton = form ? form.querySelector('button') : null;
-    if (form) {
-        form.style.display = 'none';
-    }
-    if (submitButton) {
-        submitButton.textContent = '메시지 남기기';
-    }
-    editingMessageIndex = null;
+        // 입력 필드 초기화
+        nameInput.value = '';
+        passwordInput.value = '';
+        messageInput.value = '';
 
-    // 메시지 목록 새로고침
-    loadMessages();
+        // 폼 숨기기 및 버튼 텍스트 원래대로
+        const form = document.getElementById('guestbookForm');
+        const submitButton = form ? form.querySelector('button') : null;
+        if (form) {
+            form.style.display = 'none';
+        }
+        if (submitButton) {
+            submitButton.textContent = '메시지 남기기';
+        }
+        editingMessageId = null;
+    } catch (error) {
+        console.error('메시지 저장 오류:', error);
+        showToast('메시지 저장에 실패했습니다');
+    }
 }
 
+// Firebase에서 실시간으로 메시지 불러오기
 function loadMessages() {
+    const { collection, query, orderBy, onSnapshot } = window.firestoreModules;
     const messageList = document.getElementById('messageList');
     const moreContainer = document.getElementById('guestbookMoreContainer');
     const emptyBox = document.getElementById('guestbookEmptyBox');
-    const messages = JSON.parse(localStorage.getItem('weddingMessages') || '[]');
 
-    if (messages.length === 0) {
-        messageList.innerHTML = '';
-        if (moreContainer) {
-            moreContainer.style.display = 'none';
-        }
-        // 방명록이 없을 때 임시 박스 표시
-        if (emptyBox) {
-            emptyBox.style.display = 'flex';
-        }
+    if (!window.db) {
+        console.error('Firebase가 초기화되지 않았습니다');
         return;
     }
 
-    // 방명록이 1개 이상이면 임시 박스 숨기기
-    if (emptyBox) {
-        emptyBox.style.display = 'none';
-    }
+    // 실시간 리스너 설정 (날짜 내림차순)
+    const q = query(collection(window.db, 'guestbook'), orderBy('date', 'desc'));
 
-    // 표시할 메시지 개수 결정
-    const messagesToShow = messages.slice(0, displayedMessageCount);
-    const hasMore = messages.length > displayedMessageCount;
+    onSnapshot(q, (snapshot) => {
+        window.allMessages = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
 
-    messageList.innerHTML = messagesToShow.map((msg, index) => {
-        const date = new Date(msg.date);
-        const dateStr = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
-        const messageContent = escapeHtml(msg.message);
-        const name = escapeHtml(msg.name);
+        const messages = window.allMessages;
 
-        // 실제 메시지 배열의 인덱스 찾기
-        const actualIndex = messages.findIndex(m => m.date === msg.date);
-        
-        return `
-            <div class="message-item">
-                <div class="message-top">
-                    <span class="message-name">${name}</span>
-                    <div class="message-buttons">
-                        <span class="message-edit" onclick="editMessage(${actualIndex})">✎</span>
-                        <span class="message-close" onclick="deleteMessage(${actualIndex})">×</span>
-                    </div>
-                </div>
-                <div class="message-content">${messageContent}</div>
-            </div>
-        `;
-    }).join('');
-    
-    // 더보기/접기 버튼 표시/숨김
-    if (moreContainer) {
-        const moreBtn = document.getElementById('guestbookMoreBtn');
-        if (hasMore || displayedMessageCount >= messages.length) {
-            moreContainer.style.display = 'block';
-            // 모든 메시지가 표시되고 있으면 접기, 아니면 더보기
-            if (moreBtn) {
-                if (displayedMessageCount >= messages.length && messages.length > 3) {
-                    moreBtn.innerHTML = '접기 <span class="guestbook-more-arrow">▲</span>';
-                } else {
-                    moreBtn.innerHTML = '더보기 <span class="guestbook-more-arrow">▼</span>';
-                }
+        if (messages.length === 0) {
+            messageList.innerHTML = '';
+            if (moreContainer) {
+                moreContainer.style.display = 'none';
             }
-        } else {
-            moreContainer.style.display = 'none';
+            if (emptyBox) {
+                emptyBox.style.display = 'flex';
+            }
+            return;
         }
-    }
+
+        if (emptyBox) {
+            emptyBox.style.display = 'none';
+        }
+
+        // 표시할 메시지 개수 결정
+        const messagesToShow = messages.slice(0, displayedMessageCount);
+        const hasMore = messages.length > displayedMessageCount;
+
+        messageList.innerHTML = messagesToShow.map((msg) => {
+            const date = new Date(msg.date);
+            const dateStr = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
+            const messageContent = escapeHtml(msg.message);
+            const name = escapeHtml(msg.name);
+
+            return `
+                <div class="message-item">
+                    <div class="message-top">
+                        <span class="message-name">${name}</span>
+                        <div class="message-buttons">
+                            <span class="message-edit" onclick="editMessage('${msg.id}')">✎</span>
+                            <span class="message-close" onclick="deleteMessage('${msg.id}')">×</span>
+                        </div>
+                    </div>
+                    <div class="message-content">${messageContent}</div>
+                </div>
+            `;
+        }).join('');
+
+        // 더보기/접기 버튼 표시/숨김
+        if (moreContainer) {
+            const moreBtn = document.getElementById('guestbookMoreBtn');
+            if (hasMore || displayedMessageCount >= messages.length) {
+                moreContainer.style.display = 'block';
+                if (moreBtn) {
+                    if (displayedMessageCount >= messages.length && messages.length > 3) {
+                        moreBtn.innerHTML = '접기 <span class="guestbook-more-arrow">▲</span>';
+                    } else {
+                        moreBtn.innerHTML = '더보기 <span class="guestbook-more-arrow">▼</span>';
+                    }
+                }
+            } else {
+                moreContainer.style.display = 'none';
+            }
+        }
+    });
 }
 
 // 더보기 기능
 function showMoreMessages() {
-    const messages = JSON.parse(localStorage.getItem('weddingMessages') || '[]');
+    const messages = window.allMessages || [];
     const moreBtn = document.getElementById('guestbookMoreBtn');
-    
+
     // 현재 모든 메시지가 표시되고 있는지 확인
     if (displayedMessageCount >= messages.length) {
         // 접기: 다시 3개만 표시
@@ -502,87 +517,89 @@ function showMoreMessages() {
             moreBtn.innerHTML = '접기 <span class="guestbook-more-arrow">▲</span>';
         }
     }
-    
+
+    // 다시 렌더링 (onSnapshot이 자동으로 처리하지만 즉시 반영을 위해)
     loadMessages();
 }
 
-// 방명록 삭제
-function deleteMessage(index) {
-    let messages = JSON.parse(localStorage.getItem('weddingMessages') || '[]');
-    
-    if (index >= messages.length) {
+// 방명록 삭제 (Firebase)
+async function deleteMessage(messageId) {
+    const messages = window.allMessages || [];
+    const message = messages.find(m => m.id === messageId);
+
+    if (!message) {
         showToast('메시지를 찾을 수 없습니다');
         return;
     }
 
-    const message = messages[index];
-    
     // 비밀번호 확인
     const password = prompt('비밀번호를 입력해주세요:');
-    
+
     if (password === null) {
-        // 취소 버튼을 눌렀을 때
         return;
     }
-    
+
     if (password !== message.password) {
         showToast('비밀번호가 일치하지 않습니다');
         return;
     }
-    
+
     // 비밀번호가 맞으면 삭제
-    messages.splice(index, 1);
-    localStorage.setItem('weddingMessages', JSON.stringify(messages));
-    loadMessages();
-    showToast('메시지가 삭제되었습니다');
+    const { deleteDoc, doc } = window.firestoreModules;
+
+    try {
+        await deleteDoc(doc(window.db, 'guestbook', messageId));
+        showToast('메시지가 삭제되었습니다');
+    } catch (error) {
+        console.error('삭제 오류:', error);
+        showToast('메시지 삭제에 실패했습니다');
+    }
 }
 
-// 방명록 수정
-function editMessage(index) {
-    let messages = JSON.parse(localStorage.getItem('weddingMessages') || '[]');
-    
-    if (index >= messages.length) {
+// 방명록 수정 (Firebase)
+function editMessage(messageId) {
+    const messages = window.allMessages || [];
+    const message = messages.find(m => m.id === messageId);
+
+    if (!message) {
         showToast('메시지를 찾을 수 없습니다');
         return;
     }
 
-    const message = messages[index];
-    
     // 비밀번호 확인
     const password = prompt('비밀번호를 입력해주세요:');
-    
+
     if (password === null) {
-        // 취소 버튼을 눌렀을 때
         return;
     }
-    
+
     if (password !== message.password) {
         showToast('비밀번호가 일치하지 않습니다');
         return;
     }
-    
+
     // 비밀번호가 맞으면 수정 폼 표시
     const nameInput = document.getElementById('guestName');
     const passwordInput = document.getElementById('guestPassword');
     const messageInput = document.getElementById('guestMessage');
     const form = document.getElementById('guestbookForm');
     const submitButton = form ? form.querySelector('button') : null;
-    
+
     if (nameInput && passwordInput && messageInput && form) {
         nameInput.value = message.name;
         passwordInput.value = message.password;
         messageInput.value = message.message;
-        
-        // 수정 모드로 설정
-        editingMessageIndex = index;
-        
+
+        // 수정 모드로 설정 (messageId 저장)
+        editingMessageId = messageId;
+
         // 버튼 텍스트 변경
         if (submitButton) {
             submitButton.textContent = '메시지 수정하기';
         }
-        
+
         form.style.display = 'block';
-        
+
         // 폼이 보이도록 스크롤
         form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
