@@ -1076,3 +1076,43 @@ function initNaverMap() {
     // 기본으로 정보창 열어두기
     infowindow.open(map, marker);
 }
+
+// ============================================
+// 카카오톡 공유하기
+// ============================================
+
+// Kakao SDK 초기화
+if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) {
+    Kakao.init('a23deef6d95570902f15e2c58fe9a3af');
+    console.log('Kakao SDK 초기화 완료:', Kakao.isInitialized());
+}
+
+// 카카오톡 공유하기 함수
+function shareKakao() {
+    if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
+        showToast('카카오톡 공유 기능을 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+        return;
+    }
+
+    Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+            title: '장원석 ❤️ 김한비 결혼합니다',
+            description: '2025년 2월 8일 토요일 오후 1시\n더컨벤션 웨딩홀 5층 그레이스홀',
+            imageUrl: 'https://ehrtjrhdcor.github.io/wedding/images/1.png',
+            link: {
+                mobileWebUrl: 'https://ehrtjrhdcor.github.io/wedding/',
+                webUrl: 'https://ehrtjrhdcor.github.io/wedding/',
+            },
+        },
+        buttons: [
+            {
+                title: '모바일 청첩장 보기',
+                link: {
+                    mobileWebUrl: 'https://ehrtjrhdcor.github.io/wedding/',
+                    webUrl: 'https://ehrtjrhdcor.github.io/wedding/',
+                },
+            },
+        ],
+    });
+}
