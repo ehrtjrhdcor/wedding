@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <!-- 네이버 지도 API -->
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=2wtt0c80a1"></script>
 </head>
 <body>
     <!-- 메인 헤더 -->
@@ -164,10 +166,7 @@
             </div>
 
             <div class="map-container">
-                <div id="map" class="map-placeholder">
-                    <!-- 네이버 지도 API를 사용하거나 정적 지도 이미지를 사용할 수 있습니다 -->
-                    <p>지도 영역<br>(네이버 지도 API 연동 필요)</p>
-                </div>
+                <div id="map" style="width:100%; height:400px;"></div>
                 <button class="btn-map-image" onclick="viewMapImage()">
                     <span class="map-icon">📍</span>
                     약도 이미지 보기
@@ -182,9 +181,9 @@
                         <span class="nav-icon">📍</span>
                         네이버지도
                     </button>
-                    <button onclick="openTmap()" class="btn-nav tmap">
-                        <span class="nav-icon">T</span>
-                        티맵
+                    <button onclick="openTmap()" class="btn-nav google">
+                        <span class="nav-icon">🌏</span>
+                        구글지도
                     </button>
                     <button onclick="openKakaoNavi()" class="btn-nav kakao">
                         <span class="nav-icon">💬</span>

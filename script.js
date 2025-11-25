@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initCalendar();
     initCountdown();
     initGallery();
+    initNaverMap();
 });
 
 
@@ -168,47 +169,60 @@ document.addEventListener('keydown', function(event) {
 // 지도 앱 열기
 function openKakaoMap() {
     // 실제 장소 좌표로 변경하세요
-    const placeName = '예식장 이름';
+    const placeName = '순천아모르웨딩컨벤션';
     const url = `https://map.kakao.com/link/search/${encodeURIComponent(placeName)}`;
     window.open(url, '_blank');
 }
 
 function openNaverMap() {
-    // 아모르웨딩컨벤션
-    const placeName = '아모르웨딩컨벤션';
+    // 순천아모르웨딩컨벤션
+    const placeName = '순천아모르웨딩컨벤션';
     const address = '전남 순천시 서면 압곡길 94';
-    const url = `https://map.naver.com/v5/search/${encodeURIComponent(placeName + ' ' + address)}`;
+    const url = `https://map.naver.com/v5/search/${encodeURIComponent(placeName)}`;
     window.open(url, '_blank');
 }
 
 function openTmap() {
-    // 아모르웨딩컨벤션
-    const placeName = '아모르웨딩컨벤션';
+    // 구글 지도로 변경 (티맵 대체)
+    const placeName = '순천아모르웨딩컨벤션';
     const address = '전남 순천시 서면 압곡길 94';
-    // 티맵 앱이 설치되어 있으면 앱으로 열고, 없으면 웹으로 열기
-    const url = `https://tmapapi.sktelecom.com/main/shortUrl.nhn?appKey=YOUR_APP_KEY&lonlat=127.5,34.9&name=${encodeURIComponent(placeName)}`;
-    // 실제로는 티맵 앱 스킴을 사용하거나 웹 링크를 사용할 수 있습니다
-    window.open(`tmap://search?name=${encodeURIComponent(placeName)}`, '_blank');
+
+    // 구글 지도 검색 URL (모바일/PC 모두 작동)
+    const googleMapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(placeName)}`;
+    window.open(googleMapUrl, '_blank');
 }
 
 function openKakaoNavi() {
-    // 아모르웨딩컨벤션
-    const placeName = '아모르웨딩컨벤션';
+    // 순천아모르웨딩컨벤션
+    const placeName = '순천아모르웨딩컨벤션';
     const address = '전남 순천시 서면 압곡길 94';
-    // 카카오내비 앱 스킴
-    const url = `kakaomap://search?q=${encodeURIComponent(placeName + ' ' + address)}`;
-    window.location.href = url;
-    // 앱이 없을 경우를 대비한 폴백
-    setTimeout(() => {
-        window.open(`https://map.kakao.com/link/search/${encodeURIComponent(placeName + ' ' + address)}`, '_blank');
-    }, 500);
+
+    // 카카오내비 앱 스킴 (카카오맵 검색)
+    const kakaoMapUrl = `https://m.map.kakao.com/actions/searchView?q=${encodeURIComponent(placeName)}&sort=0#!/all/map/place`;
+    window.open(kakaoMapUrl, '_blank');
+    // window.location.href = kakaoMapUrl;
 }
 
 function viewMapImage() {
-    // 약도 이미지를 보여주는 함수
-    // 실제 약도 이미지가 있다면 모달로 표시하거나 새 창으로 열 수 있습니다
-    showToast('약도 이미지 기능을 준비 중입니다');
-    // 예시: window.open('images/map-image.jpg', '_blank');
+    // 약도 이미지를 모달로 표시
+    const mapImagePath = 'images/map-guide.jpg'; // 약도 이미지 경로
+
+    // 이미지 존재 확인을 위해 시도
+    const img = new Image();
+    img.onload = function() {
+        // 이미지가 존재하면 갤러리 모달 활용
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+
+        modalImg.src = mapImagePath;
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    };
+    img.onerror = function() {
+        // 이미지가 없으면 토스트 메시지
+        showToast('약도 이미지를 준비 중입니다');
+    };
+    img.src = mapImagePath;
 }
 
 // 계좌 섹션 토글
@@ -812,7 +826,71 @@ function initCountdown() {
 
     // 즉시 업데이트
     updateCountdown();
-    
+
     // 1초마다 업데이트
     setInterval(updateCountdown, 1000);
+}
+
+// 네이버 지도 초기화
+function initNaverMap() {
+    // 네이버 지도 API가 로드되었는지 확인
+    if (typeof naver === 'undefined') {
+        console.error('네이버 지도 API가 로드되지 않았습니다.');
+        return;
+    }
+
+    const mapElement = document.getElementById('map');
+    if (!mapElement) {
+        console.error('지도 요소를 찾을 수 없습니다.');
+        return;
+    }
+
+    // 순천아모르웨딩컨벤션 좌표
+    const weddingLocation = new naver.maps.LatLng(34.9471, 127.4647);
+
+    // 지도 옵션
+    const mapOptions = {
+        center: weddingLocation,
+        zoom: 16,
+        zoomControl: true,
+        zoomControlOptions: {
+            position: naver.maps.Position.TOP_RIGHT
+        }
+    };
+
+    // 지도 생성
+    const map = new naver.maps.Map('map', mapOptions);
+
+    // 마커 생성
+    const marker = new naver.maps.Marker({
+        position: weddingLocation,
+        map: map,
+        title: '순천아모르웨딩컨벤션'
+    });
+
+    // 정보창 내용
+    const contentString = [
+        '<div style="padding:10px;min-width:200px;line-height:1.5;">',
+        '   <h4 style="margin:0 0 10px 0;font-size:16px;font-weight:bold;">순천아모르웨딩컨벤션</h4>',
+        '   <p style="margin:0;font-size:13px;color:#666;">전남 순천시 서면 압곡길 94</p>',
+        '   <p style="margin:5px 0 0 0;font-size:13px;color:#666;">Tel. 061-752-1000</p>',
+        '</div>'
+    ].join('');
+
+    // 정보창 생성
+    const infowindow = new naver.maps.InfoWindow({
+        content: contentString
+    });
+
+    // 마커 클릭 시 정보창 표시
+    naver.maps.Event.addListener(marker, 'click', function() {
+        if (infowindow.getMap()) {
+            infowindow.close();
+        } else {
+            infowindow.open(map, marker);
+        }
+    });
+
+    // 기본으로 정보창 열어두기
+    infowindow.open(map, marker);
 }
