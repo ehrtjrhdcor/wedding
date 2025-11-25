@@ -59,7 +59,7 @@ function showMoreGallery() {
             item.style.display = '';
         });
         if (moreBtn) {
-            moreBtn.innerHTML = '접기 <span class="gallery-more-arrow">▲</span>';
+            moreBtn.innerHTML = '접기 <img src="images/arrow.svg" alt="접기" class="gallery-more-arrow">';
             moreBtn.classList.add('expanded');
         }
         // 그라데이션 오버레이 숨기기
@@ -76,7 +76,7 @@ function showMoreGallery() {
             }
         });
         if (moreBtn) {
-            moreBtn.innerHTML = '더보기 <span class="gallery-more-arrow">▼</span>';
+            moreBtn.innerHTML = '더보기 <img src="images/arrowdown.svg" alt="더보기" class="gallery-more-arrow">';
             moreBtn.classList.remove('expanded');
         }
         // 그라데이션 오버레이 다시 표시
@@ -322,7 +322,7 @@ function focusGuestbook() {
 
 function showGuestbookForm() {
     const form = document.getElementById('guestbookForm');
-    const submitButton = form ? form.querySelector('button') : null;
+    const submitButton = document.getElementById('guestbookSubmitBtn');
 
     if (form) {
         const isHidden = form.style.display === 'none';
@@ -343,6 +343,19 @@ function showGuestbookForm() {
             if (messageInput) messageInput.value = '';
         }
     }
+}
+
+function closeGuestbookForm() {
+    const form = document.getElementById('guestbookForm');
+    const submitButton = document.getElementById('guestbookSubmitBtn');
+
+    if (form) {
+        form.style.display = 'none';
+    }
+    if (submitButton) {
+        submitButton.textContent = '메시지 남기기';
+    }
+    editingMessageId = null;
 }
 
 
@@ -403,7 +416,7 @@ async function submitMessage() {
 
         // 폼 숨기기 및 버튼 텍스트 원래대로
         const form = document.getElementById('guestbookForm');
-        const submitButton = form ? form.querySelector('button') : null;
+        const submitButton = document.getElementById('guestbookSubmitBtn');
         if (form) {
             form.style.display = 'none';
         }
@@ -486,9 +499,11 @@ function loadMessages() {
                 moreContainer.style.display = 'block';
                 if (moreBtn) {
                     if (displayedMessageCount >= messages.length && messages.length > 3) {
-                        moreBtn.innerHTML = '접기 <span class="guestbook-more-arrow">▲</span>';
+                        moreBtn.innerHTML = '접기 <img src="images/arrow.svg" alt="접기" class="guestbook-more-arrow">';
+                        moreBtn.classList.add('expanded');
                     } else {
-                        moreBtn.innerHTML = '더보기 <span class="guestbook-more-arrow">▼</span>';
+                        moreBtn.innerHTML = '더보기 <img src="images/arrowdown.svg" alt="더보기" class="guestbook-more-arrow">';
+                        moreBtn.classList.remove('expanded');
                     }
                 }
             } else {
@@ -508,13 +523,15 @@ function showMoreMessages() {
         // 접기: 다시 3개만 표시
         displayedMessageCount = 3;
         if (moreBtn) {
-            moreBtn.innerHTML = '더보기 <span class="guestbook-more-arrow">▼</span>';
+            moreBtn.innerHTML = '더보기 <img src="images/arrowdown.svg" alt="더보기" class="guestbook-more-arrow">';
+            moreBtn.classList.remove('expanded');
         }
     } else {
         // 더보기: 모든 메시지 표시
         displayedMessageCount = messages.length;
         if (moreBtn) {
-            moreBtn.innerHTML = '접기 <span class="guestbook-more-arrow">▲</span>';
+            moreBtn.innerHTML = '접기 <img src="images/arrow.svg" alt="접기" class="guestbook-more-arrow">';
+            moreBtn.classList.add('expanded');
         }
     }
 
@@ -583,7 +600,7 @@ function editMessage(messageId) {
     const passwordInput = document.getElementById('guestPassword');
     const messageInput = document.getElementById('guestMessage');
     const form = document.getElementById('guestbookForm');
-    const submitButton = form ? form.querySelector('button') : null;
+        const submitButton = document.getElementById('guestbookSubmitBtn');
 
     if (nameInput && passwordInput && messageInput && form) {
         nameInput.value = message.name;

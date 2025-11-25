@@ -483,10 +483,13 @@ h2::after {
 .gallery-more-arrow {
     font-size: 12px;
     transition: transform 0.3s;
+    display: inline-block;
+    position: relative;
+    top: 0;
 }
 
 .gallery-more-btn.expanded .gallery-more-arrow {
-    transform: rotate(180deg);
+    top: 2px;
 }
 
 /* 오시는 길 */
@@ -592,6 +595,15 @@ h3.venue-name {
 
 .map-icon {
     font-size: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.map-icon img {
+    width: 18px;
+    height: 18px;
+    display: block;
 }
 
 .navigation-section {
@@ -642,10 +654,15 @@ h3.venue-name {
 .btn-nav .nav-icon {
     font-size: 24px;
     font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.btn-nav.naver .nav-icon {
-    color: #03c75a;
+.btn-nav .nav-icon img {
+    width: 24px;
+    height: 24px;
+    display: block;
 }
 
 .btn-nav.tmap .nav-icon {
@@ -1168,6 +1185,25 @@ h3.venue-name {
     border-radius: 10px;
     margin-bottom: 30px;
     box-shadow: var(--shadow);
+    position: relative;
+}
+
+.guestbook-form-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    color: #999;
+    padding: 0;
+    transition: color 0.3s;
+}
+
+.guestbook-form-close:hover {
+    color: #333;
 }
 
 .guestbook-form input,
@@ -1187,7 +1223,7 @@ h3.venue-name {
     resize: vertical;
 }
 
-.guestbook-form button {
+.guestbook-form button:not(.guestbook-form-close) {
     width: 100%;
     padding: 12px;
     background-color: var(--primary-color);
@@ -1199,7 +1235,7 @@ h3.venue-name {
     transition: background-color 0.3s;
 }
 
-.guestbook-form button:hover {
+.guestbook-form button:not(.guestbook-form-close):hover {
     background-color: #c69563;
 }
 
@@ -1305,6 +1341,13 @@ h3.venue-name {
 .guestbook-more-arrow {
     font-size: 12px;
     transition: transform 0.3s;
+    display: inline-block;
+    position: relative;
+    top: 0;
+}
+
+.guestbook-more-btn.expanded .guestbook-more-arrow {
+    top: 2px;
 }
 
 .guestbook-write-btn {
