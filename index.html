@@ -12,6 +12,10 @@
     <!-- <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=2wtt0c80a1"></script> -->
     <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=2wtt0c80a1"></script>
 
+    <!-- Google API -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
@@ -329,10 +333,14 @@
             </div>
 
             <div class="snap-upload-section">
+                <input type="file" id="photoInput" accept="image/*" multiple style="display: none;" onchange="handlePhotoSelect(event)">
                 <button class="btn-upload-photo" onclick="uploadPhoto()">사진 업로드</button>
                 <div class="upload-availability">
                     <p>2026-01-11 11:00부터</p>
                     <p>업로드 가능합니다.</p>
+                </div>
+                <div id="uploadProgress" style="display: none; margin-top: 10px;">
+                    <p id="uploadStatus">업로드 중...</p>
                 </div>
             </div>
         </div>

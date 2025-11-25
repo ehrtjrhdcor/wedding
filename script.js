@@ -755,34 +755,134 @@ function preloadImages() {
 window.addEventListener('load', preloadImages);
 
 // 사진 업로드 함수
-function uploadPhoto() {
-    // 파일 입력 요소 생성
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.multiple = true;
-    
-    input.onchange = function(e) {
-        const files = e.target.files;
-        if (files.length > 0) {
-            // 여기에 실제 업로드 로직을 구현하세요
-            // 예: 서버로 파일 전송, 이미지 미리보기 등
-            showToast(`${files.length}개의 사진이 선택되었습니다`);
-            
-            // 실제로는 서버 API를 호출하여 업로드해야 합니다
-            // 예시:
-            // const formData = new FormData();
-            // for (let i = 0; i < files.length; i++) {
-            //     formData.append('photos', files[i]);
-            // }
-            // fetch('/api/upload', { method: 'POST', body: formData })
-            //     .then(response => response.json())
-            //     .then(data => showToast('사진이 업로드되었습니다'));
-        }
-    };
-    
-    input.click();
+// Google Drive API 설정
+const GOOGLE_CLIENT_ID = '406271324350-j9o25t29vvik2esl47nd4klsvj5cs6as.apps.googleusercontent.com';
+const GOOGLE_API_KEY = 'AIzaSyBCPLJavVEdyApoHPBryQE8esEBGHpZZzA';
+const GOOGLE_DRIVE_FOLDER_ID = '1vOYtfgDdZuiV5yvEM2k506nsYhONMHP8';
+const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+
+let isGoogleApiLoaded = false;
+let isGoogleSignedIn = false;
+
+// Google API 로드
+function loadGoogleApi() {
+    gapi.load('client:auth2', initGoogleClient);
 }
+
+// Google Client 초기화
+function initGoogleClient() {
+    gapi.client.init({
+        apiKey: GOOGLE_API_KEY,
+        clientId: GOOGLE_CLIENT_ID,
+        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+        scope: SCOPES
+    }).then(() => {
+        isGoogleApiLoaded = true;
+        const authInstance = gapi.auth2.getAuthInstance();
+        isGoogleSignedIn = authInstance.isSignedIn.get();
+    }).catch(error => {
+        console.error('Google API 초기화 오류:', error);
+    });
+}
+
+// 사진 업로드 버튼 클릭
+function uploadPhoto() {
+    if (!isGoogleApiLoaded) {
+        loadGoogleApi();
+        setTimeout(() => {
+            uploadPhoto();
+        }, 1000);
+        return;
+    }
+
+    const authInstance = gapi.auth2.getAuthInstance();
+
+    if (!authInstance.isSignedIn.get()) {
+        // 구글 로그인
+        authInstance.signIn().then(() => {
+            document.getElementById('photoInput').click();
+        }).catch(error => {
+            console.error('로그인 오류:', error);
+            showToast('구글 로그인이 필요합니다');
+        });
+    } else {
+        document.getElementById('photoInput').click();
+    }
+}
+
+// 파일 선택 후 처리
+async function handlePhotoSelect(event) {
+    const files = event.target.files;
+    if (files.length === 0) return;
+
+    const uploadProgress = document.getElementById('uploadProgress');
+    const uploadStatus = document.getElementById('uploadStatus');
+
+    uploadProgress.style.display = 'block';
+    uploadStatus.textContent = `0 / ${files.length} 업로드 중...`;
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (let i = 0; i < files.length; i++) {
+        try {
+            await uploadToGoogleDrive(files[i]);
+            successCount++;
+            uploadStatus.textContent = `${successCount} / ${files.length} 업로드 중...`;
+        } catch (error) {
+            console.error('업로드 오류:', error);
+            failCount++;
+        }
+    }
+
+    uploadProgress.style.display = 'none';
+
+    if (failCount > 0) {
+        showToast(`${successCount}개 업로드 성공, ${failCount}개 실패`);
+    } else {
+        showToast(`${successCount}개의 사진이 업로드되었습니다!`);
+    }
+
+    // 파일 입력 초기화
+    event.target.value = '';
+}
+
+// Google Drive에 파일 업로드
+function uploadToGoogleDrive(file) {
+    return new Promise((resolve, reject) => {
+        const metadata = {
+            name: file.name,
+            mimeType: file.type,
+            parents: [GOOGLE_DRIVE_FOLDER_ID]
+        };
+
+        const form = new FormData();
+        form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+        form.append('file', file);
+
+        fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+            method: 'POST',
+            headers: new Headers({ 'Authorization': 'Bearer ' + gapi.auth.getToken().access_token }),
+            body: form
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                resolve(data);
+            } else {
+                reject(data);
+            }
+        })
+        .catch(error => reject(error));
+    });
+}
+
+// 페이지 로드 시 Google API 초기화
+window.addEventListener('load', () => {
+    if (typeof gapi !== 'undefined') {
+        loadGoogleApi();
+    }
+});
 
 // 달력 생성
 function initCalendar() {
