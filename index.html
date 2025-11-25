@@ -5,41 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="모바일 청첩장">
     <title>청첩장</title>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- 메인 헤더 -->
     <section class="hero">
-        <div class="hero-content">
-            <h1 class="fade-in">우리 결혼합니다123</h1>
-            <div class="names">
-                <span class="groom-name">광현 이름</span>
-                <span class="divider">♥</span>
-                <span class="bride-name">신부 이름</span>
+        <img src="images/1.png" alt="Frame 3" class="frame-3-image">
+        
+        <!-- 인사말 -->
+        <div class="greeting-content">
+            <div class="container">
+                <div class="invitation-label">INVITATION</div>
+                <h1 class="invitation-title">저희 결혼합니다!</h1>
+                <div class="greeting-text">
+                    <p>하얀 눈이 소복이 쌓인 겨울날,</p>
+                    <p>우리 두 사람의 사랑이 새로이 시작됩니다.</p>
+                    <p>언제나 따스한 마음으로 서로를 품으며</p>
+                    <p>평생 함께할 것을 약속드리는 소중한 날</p>
+                    <p>귀한 발걸음으로 축복해주시면</p>
+                    <p>그 마음 오래도록 가슴 깊이 간직하겠습니다.</p>
+                </div>
+                <div class="greeting-divider"></div>
+                <div class="greeting-names">
+                    <p>장승용·정혜정<span class="relation">의 장남</span> 원석</p>
+                    <p>김영민·조기순<span class="relation">의 장녀</span> 한비</p>
+                </div>
             </div>
-            <p class="wedding-date">2025년 00월 00일 00요일 오후 00시</p>
         </div>
-        <div class="scroll-indicator">
-            <span>아래로 스크롤하세요</span>
-            <div class="arrow-down"></div>
+        
+        <!-- 달력 섹션 -->
+        <div class="calendar-section">
+            <div class="container">
+                <div class="wedding-date-large">2026.01.11</div>
+                <div class="wedding-time">일요일 오전 11시</div>
+                
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <span>일</span>
+                        <span>월</span>
+                        <span>화</span>
+                        <span>수</span>
+                        <span>목</span>
+                        <span>금</span>
+                        <span>토</span>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- 달력 날짜들이 여기에 동적으로 생성됩니다 -->
+                    </div>
+                </div>
+                
+                <div class="countdown-section">
+                    <div class="countdown-labels">
+                        <div class="countdown-label-item">
+                            <div class="countdown-label">DAYS</div>
+                            <div class="countdown-value" id="countdownDays">00</div>
+                        </div>
+                        <div class="countdown-separator">:</div>
+                        <div class="countdown-label-item">
+                            <div class="countdown-label">HOUR</div>
+                            <div class="countdown-value" id="countdownHours">00</div>
+                        </div>
+                        <div class="countdown-separator">:</div>
+                        <div class="countdown-label-item">
+                            <div class="countdown-label">MIN</div>
+                            <div class="countdown-value" id="countdownMinutes">00</div>
+                        </div>
+                        <div class="countdown-separator">:</div>
+                        <div class="countdown-label-item">
+                            <div class="countdown-label">SEC</div>
+                            <div class="countdown-value" id="countdownSeconds">00</div>
+                        </div>
+                    </div>
+                    <div class="wedding-day-message">원석, 한비의 결혼식이 <span class="wedding-day-count" id="weddingDayCount">0</span>일 남았습니다.</div>
+                </div>
+            </div>
         </div>
-    </section>
-
-    <!-- 인사말 -->
-    <section class="greeting">
-        <div class="container">
-            <h2>소중한 분들을 초대합니다</h2>
-            <div class="greeting-text">
-                <p>
-                    평생을 함께하기로 약속한<br>
-                    저희 두 사람이<br>
-                    사랑의 결실을 맺게 되었습니다.
-                </p>
-                <p>
-                    귀한 걸음 하시어<br>
-                    축복해 주시면<br>
-                    더없는 기쁨으로 간직하겠습니다.
-                </p>
+        
+        <div class="hero-top" style="display: none;">
+            <div class="hero-content">
+                <h1 class="fade-in">저희 결혼합니다!</h1>
+                <div class="names">
+                    <span class="groom-name">광현이아님 이름</span>
+                    <span class="divider">♥</span>
+                    <span class="bride-name">신부 이름</span>
+                </div>
+                <p class="wedding-date">2025년 00월 00일 00요일 오후 00시</p>
             </div>
         </div>
     </section>
@@ -47,26 +99,44 @@
     <!-- 갤러리 -->
     <section class="gallery">
         <div class="container">
-            <h2>Gallery</h2>
-            <div class="gallery-grid">
-                <div class="gallery-item" onclick="openModal(0)">
-                    <div class="placeholder-img">사진 1</div>
-                </div>
-                <div class="gallery-item" onclick="openModal(1)">
-                    <div class="placeholder-img">사진 2</div>
-                </div>
-                <div class="gallery-item" onclick="openModal(2)">
-                    <div class="placeholder-img">사진 3</div>
-                </div>
+            <div class="gallery-label">GALLERY</div>
+            <h2 class="gallery-title">웨딩 갤러리</h2>
+            <div class="gallery-wrapper">
+                <div class="gallery-grid" id="galleryGrid">
+                    <div class="gallery-item" onclick="openModal(0)">
+                        <img src="images/4.jpg" alt="웨딩 사진 1">
+                    </div>
+                    <div class="gallery-item" onclick="openModal(1)">
+                        <img src="images/10.jpg" alt="웨딩 사진 2">
+                    </div>
+                    <div class="gallery-item" onclick="openModal(2)">
+                        <img src="images/11.jpg" alt="웨딩 사진 3">
+                    </div>
                 <div class="gallery-item" onclick="openModal(3)">
-                    <div class="placeholder-img">사진 4</div>
+                    <img src="images/45.jpg" alt="웨딩 사진 4">
                 </div>
-                <div class="gallery-item" onclick="openModal(4)">
-                    <div class="placeholder-img">사진 5</div>
+                <div class="gallery-item gallery-item-hidden" onclick="openModal(4)">
+                    <img src="images/22.jpg" alt="웨딩 사진 5">
                 </div>
-                <div class="gallery-item" onclick="openModal(5)">
-                    <div class="placeholder-img">사진 6</div>
+                <div class="gallery-item gallery-item-hidden" onclick="openModal(5)">
+                    <img src="images/24.jpg" alt="웨딩 사진 6">
                 </div>
+                <div class="gallery-item gallery-item-hidden" onclick="openModal(6)">
+                    <img src="images/32.jpg" alt="웨딩 사진 7">
+                </div>
+                <div class="gallery-item gallery-item-hidden" onclick="openModal(7)">
+                    <img src="images/26.jpg" alt="웨딩 사진 8">
+                </div>
+                <div class="gallery-item gallery-item-hidden" onclick="openModal(8)">
+                    <img src="images/17.jpg" alt="웨딩 사진 9">
+                </div>
+                </div>
+                <div class="gallery-fade-overlay" id="galleryFadeOverlay"></div>
+            </div>
+            <div class="gallery-more-container">
+                <button class="gallery-more-btn" id="galleryMoreBtn" onclick="showMoreGallery()">
+                    더보기 <span class="gallery-more-arrow">▼</span>
+                </button>
             </div>
         </div>
     </section>
@@ -81,142 +151,106 @@
         </div>
     </div>
 
-    <!-- 예식 정보 -->
-    <section class="wedding-info">
+    <!-- 오시는 길 -->
+    <section class="location">
         <div class="container">
-            <h2>예식 안내</h2>
-            <div class="info-box">
-                <div class="info-item">
-                    <span class="icon">📅</span>
-                    <h3>날짜</h3>
-                    <p>2025년 00월 00일 00요일</p>
-                </div>
-                <div class="info-item">
-                    <span class="icon">🕐</span>
-                    <h3>시간</h3>
-                    <p>오후 00시 00분</p>
-                </div>
-                <div class="info-item">
-                    <span class="icon">📍</span>
-                    <h3>장소</h3>
-                    <p>예식장 이름<br>00층 00홀</p>
-                </div>
+            <div class="location-label">LOCATION</div>
+            <h2 class="location-title">오시는 길</h2>
+            
+            <div class="location-info">
+                <h3 class="venue-name">순천아모르웨딩컨벤션</h3>
+                <p class="venue-address">전남 순천시 서면 압곡길 94</p>
+                <p class="venue-phone">Tel. 061-752-1000</p>
             </div>
-        </div>
-    </section>
 
-    <!-- 지도 -->
-    <section class="map-section">
-        <div class="container">
-            <h2>오시는 길</h2>
             <div class="map-container">
                 <div id="map" class="map-placeholder">
-                    <!-- 여기에 실제 지도 API를 연동하세요 (카카오맵, 네이버맵 등) -->
-                    <p>지도 영역<br>(카카오맵 API 연동 필요)</p>
+                    <!-- 네이버 지도 API를 사용하거나 정적 지도 이미지를 사용할 수 있습니다 -->
+                    <p>지도 영역<br>(네이버 지도 API 연동 필요)</p>
                 </div>
+                <button class="btn-map-image" onclick="viewMapImage()">
+                    <span class="map-icon">📍</span>
+                    약도 이미지 보기
+                </button>
             </div>
-            <div class="location-info">
-                <h3>예식장 이름</h3>
-                <p class="address">서울특별시 00구 00동 000-00</p>
-                <div class="transport">
-                    <div class="transport-item">
-                        <strong>🚇 지하철</strong>
-                        <p>0호선 00역 0번 출구 도보 5분</p>
-                    </div>
-                    <div class="transport-item">
-                        <strong>🚌 버스</strong>
-                        <p>000, 000, 0000번</p>
-                    </div>
-                    <div class="transport-item">
-                        <strong>🚗 주차</strong>
-                        <p>예식장 지하 주차장 이용 가능</p>
-                    </div>
-                </div>
-                <div class="map-buttons">
-                    <button onclick="openKakaoMap()">카카오맵</button>
-                    <button onclick="openNaverMap()">네이버지도</button>
-                    <button onclick="openTmap()">티맵</button>
+
+            <div class="navigation-section">
+                <h3 class="navigation-title">내비게이션</h3>
+                <p class="navigation-desc">원하시는 앱을 선택하시면 길안내가 시작됩니다.</p>
+                <div class="navigation-buttons">
+                    <button onclick="openNaverMap()" class="btn-nav naver">
+                        <span class="nav-icon">📍</span>
+                        네이버지도
+                    </button>
+                    <button onclick="openTmap()" class="btn-nav tmap">
+                        <span class="nav-icon">T</span>
+                        티맵
+                    </button>
+                    <button onclick="openKakaoNavi()" class="btn-nav kakao">
+                        <span class="nav-icon">💬</span>
+                        카카오내비
+                    </button>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 연락처 -->
-    <section class="contact">
-        <div class="container">
-            <h2>연락하기</h2>
-            <div class="contact-box">
-                <div class="contact-side">
-                    <h3>신랑측</h3>
-                    <div class="contact-item">
-                        <p class="name">신랑 이름</p>
-                        <div class="contact-buttons">
-                            <a href="tel:010-0000-0000" class="btn-contact">📞 전화</a>
-                            <a href="sms:010-0000-0000" class="btn-contact">💬 문자</a>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <p class="name">아버지 이름</p>
-                        <div class="contact-buttons">
-                            <a href="tel:010-0000-0000" class="btn-contact">📞 전화</a>
-                            <a href="sms:010-0000-0000" class="btn-contact">💬 문자</a>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <p class="name">어머니 이름</p>
-                        <div class="contact-buttons">
-                            <a href="tel:010-0000-0000" class="btn-contact">📞 전화</a>
-                            <a href="sms:010-0000-0000" class="btn-contact">💬 문자</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="contact-side">
-                    <h3>신부측</h3>
-                    <div class="contact-item">
-                        <p class="name">신부 이름</p>
-                        <div class="contact-buttons">
-                            <a href="tel:010-0000-0000" class="btn-contact">📞 전화</a>
-                            <a href="sms:010-0000-0000" class="btn-contact">💬 문자</a>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <p class="name">아버지 이름</p>
-                        <div class="contact-buttons">
-                            <a href="tel:010-0000-0000" class="btn-contact">📞 전화</a>
-                            <a href="sms:010-0000-0000" class="btn-contact">💬 문자</a>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <p class="name">어머니 이름</p>
-                        <div class="contact-buttons">
-                            <a href="tel:010-0000-0000" class="btn-contact">📞 전화</a>
-                            <a href="sms:010-0000-0000" class="btn-contact">💬 문자</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 축의금 계좌 -->
+    <!-- 마음 전하실 곳 -->
     <section class="account">
         <div class="container">
-            <h2>마음 전하실 곳</h2>
-            <div class="account-box">
-                <div class="account-side">
-                    <h3>신랑측 계좌번호</h3>
-                    <div class="account-item">
-                        <p class="bank-info">은행명 000-0000-0000-00</p>
-                        <p class="account-name">예금주: 신랑이름</p>
-                        <button onclick="copyAccount('000-0000-0000-00')" class="btn-copy">계좌복사</button>
+            <div class="account-label">ACCOUNT</div>
+            <h2 class="account-title">마음 전하실 곳</h2>
+            
+            <div class="account-message">
+                <p>참석이 어려우신 분들을 위해</p>
+                <p>계좌번호를 기재하였습니다.</p>
+                <p>너그러운 마음으로 양해 부탁드립니다.</p>
+            </div>
+
+            <div class="account-sections">
+                <div class="account-section-item" onclick="toggleAccountSection('groom')">
+                    <span class="account-section-label">신랑측</span>
+                    <span class="account-arrow" id="groomArrow">▼</span>
+                </div>
+                <div class="account-section-content" id="groomContent" style="display: none;">
+                    <div class="account-details">
+                        <p class="account-name">신랑 장원석</p>
+                        <div class="account-bank-info">
+                            <span class="bank-name">우리은행</span>
+                            <span class="account-number">1002-257-057614</span>
+                            <span class="account-copy-icon" onclick="copyAccount('우리은행', '1002-257-057614')">📋</span>
+                        </div>
+                    </div>
+                    <div class="account-details">
+                        <p class="account-name">부 장승용</p>
+                        <div class="account-bank-info">
+                            <span class="bank-name">우리은행</span>
+                            <span class="account-number">1002-500-903120</span>
+                            <span class="account-copy-icon" onclick="copyAccount('우리은행', '1002-500-903120')">📋</span>
+                        </div>
                     </div>
                 </div>
-                <div class="account-side">
-                    <h3>신부측 계좌번호</h3>
-                    <div class="account-item">
-                        <p class="bank-info">은행명 000-0000-0000-00</p>
-                        <p class="account-name">예금주: 신부이름</p>
-                        <button onclick="copyAccount('000-0000-0000-00')" class="btn-copy">계좌복사</button>
+
+                <div class="account-section-item" onclick="toggleAccountSection('bride')">
+                    <span class="account-section-label">신부측</span>
+                    <span class="account-arrow" id="brideArrow">▼</span>
+                </div>
+                <div class="account-section-content" id="brideContent" style="display: none;">
+                    <div class="account-details">
+                        <p class="account-name">신부 김한비</p>
+                        <div class="account-bank-info">
+                            <span class="bank-name">신한은행</span>
+                            <span class="account-number">110-579-360036</span>
+                            <span class="account-copy-icon" onclick="copyAccount('신한은행', '110-579-360036')">📋</span>
+                        </div>
+                    </div>
+                    <div class="account-details">
+                        <p class="account-name">부 김영민</p>
+                        <div class="account-bank-info">
+                            <span class="bank-name">농협</span>
+                            <span class="account-number">351-1048-3910-23</span>
+                            <span class="account-copy-icon" onclick="copyAccount('농협', '351-1048-3910-23')">📋</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -225,38 +259,65 @@
 
     <!-- 방명록 -->
     <section class="guestbook">
-        <div class="container">
-            <h2>축하 메시지</h2>
-            <div class="message-form">
-                <input type="text" id="guestName" placeholder="이름" maxlength="20">
-                <textarea id="guestMessage" placeholder="축하 메시지를 남겨주세요" maxlength="200"></textarea>
-                <button onclick="submitMessage()">메시지 남기기</button>
+        <div class="guestbook-label">GUESTBOOK</div>
+        <h2 class="guestbook-title">방명록</h2>
+        
+        <div class="guestbook-input-area">
+            <div id="guestbookEmptyBox" class="guestbook-empty-box" onclick="showGuestbookForm()" style="display: none;">
+                <div class="guestbook-empty-icon">✎</div>
+                <div class="guestbook-empty-text">방명록 작성하기</div>
             </div>
             <div id="messageList" class="message-list">
                 <!-- 메시지가 여기에 표시됩니다 -->
             </div>
+            <div class="guestbook-more-container" id="guestbookMoreContainer" style="display: none;">
+                <button class="guestbook-more-btn" id="guestbookMoreBtn" onclick="showMoreMessages()">
+                    더보기 <span class="guestbook-more-arrow">▼</span>
+                </button>
+            </div>
+        </div>
+        
+        <button class="guestbook-write-btn" onclick="showGuestbookForm()">
+            작성하기
+        </button>
+
+        <div class="guestbook-form" id="guestbookForm" style="display: none;">
+            <input type="text" id="guestName" placeholder="이름" maxlength="20">
+            <input type="password" id="guestPassword" placeholder="비밀번호" maxlength="20">
+            <textarea id="guestMessage" placeholder="축하 메시지를 남겨주세요" maxlength="200"></textarea>
+            <button onclick="submitMessage()">메시지 남기기</button>
         </div>
     </section>
 
-    <!-- 공유하기 -->
-    <section class="share">
+    <!-- 스냅 섹션 -->
+    <section class="snap-section">
         <div class="container">
-            <h2>청첩장 공유하기</h2>
-            <div class="share-buttons">
-                <button onclick="shareKakao()" class="btn-share kakao">카카오톡</button>
-                <button onclick="shareFacebook()" class="btn-share facebook">페이스북</button>
-                <button onclick="copyURL()" class="btn-share url">URL 복사</button>
+            <div class="snap-label">CAPTURE OUR MOMENTS</div>
+            <h2 class="snap-title">스냅</h2>
+            
+            <div class="snap-instructions">
+                <p>신랑신부의 행복한 순간을 담아주세요.</p>
+                <p>예식 당일, 아래 버튼을 통해 사진을 올려주세요.</p>
+                <p>많은 참여 부탁드려요!</p>
+            </div>
+
+            <div class="snap-upload-section">
+                <button class="btn-upload-photo" onclick="uploadPhoto()">사진 업로드</button>
+                <div class="upload-availability">
+                    <p>2026-01-11 11:00부터</p>
+                    <p>업로드 가능합니다.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- 푸터 -->
-    <footer>
-        <div class="container">
-            <p>신랑 이름 ♥ 신부 이름</p>
-            <p class="footer-date">2025. 00. 00</p>
-        </div>
-    </footer>
+    <!-- 카카오톡 공유 -->
+    <div class="kakao-share-section">
+        <button onclick="shareKakao()" class="btn-kakao-share">
+            <span class="kakao-icon">💬</span>
+            카카오톡으로 초대장 보내기
+        </button>
+    </div>
 
     <script src="script.js"></script>
 </body>
