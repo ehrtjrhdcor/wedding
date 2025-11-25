@@ -756,7 +756,8 @@ window.addEventListener('load', preloadImages);
 
 // 사진 업로드 - 구글 폼으로 이동
 function openPhotoForm() {
-    const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScPktC2vv9aFZ9dR_uS5f3Z4BlbQAeC8CTu73aqfVaz9F1oRg/viewform';
+    // const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScPktC2vv9aFZ9dR_uS5f3Z4BlbQAeC8CTu73aqfVaz9F1oRg/viewform';
+    const googleFormUrl = 'https://form.jotform.com/253281702411043';
     window.open(googleFormUrl, '_blank');
 }
 
