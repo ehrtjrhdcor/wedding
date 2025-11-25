@@ -766,24 +766,30 @@ let gisInited = false;
 let tokenClient;
 let accessToken = null;
 
-// gapi 초기화
-function gapiLoaded() {
+// gapi 초기화 (전역 함수)
+window.gapiLoaded = function() {
     gapi.load('client', initializeGapiClient);
 }
 
 async function initializeGapiClient() {
-    await gapi.client.init({
-        apiKey: GOOGLE_API_KEY,
-        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-    });
-    gapiInited = true;
+    try {
+        await gapi.client.init({
+            apiKey: GOOGLE_API_KEY,
+            discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+        });
+        gapiInited = true;
+        console.log('Google API 초기화 완료');
+    } catch (error) {
+        console.error('Google API 초기화 오류:', error);
+    }
 }
 
-// GIS (Google Identity Services) 초기화
-function gisLoaded() {
+// GIS (Google Identity Services) 초기화 (전역 함수)
+window.gisLoaded = function() {
     tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: GOOGLE_CLIENT_ID,
         scope: SCOPES,
+        ux_mode: 'popup',
         callback: (response) => {
             if (response.error !== undefined) {
                 console.error('토큰 오류:', response);
@@ -791,11 +797,13 @@ function gisLoaded() {
                 return;
             }
             accessToken = response.access_token;
+            console.log('Google 로그인 성공');
             // 로그인 성공 후 파일 선택 창 열기
             document.getElementById('photoInput').click();
         },
     });
     gisInited = true;
+    console.log('Google Identity Services 초기화 완료');
 }
 
 // 사진 업로드 버튼 클릭
@@ -887,16 +895,6 @@ function uploadToGoogleDrive(file) {
         .catch(error => reject(error));
     });
 }
-
-// 페이지 로드 시 초기화
-window.addEventListener('load', () => {
-    if (typeof gapi !== 'undefined') {
-        gapiLoaded();
-    }
-    if (typeof google !== 'undefined' && google.accounts) {
-        gisLoaded();
-    }
-});
 
 // 달력 생성
 function initCalendar() {
