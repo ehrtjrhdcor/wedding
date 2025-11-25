@@ -761,51 +761,55 @@ const GOOGLE_API_KEY = 'AIzaSyBCPLJavVEdyApoHPBryQE8esEBGHpZZzA';
 const GOOGLE_DRIVE_FOLDER_ID = '1vOYtfgDdZuiV5yvEM2k506nsYhONMHP8';
 const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 
-let isGoogleApiLoaded = false;
-let isGoogleSignedIn = false;
+let gapiInited = false;
+let gisInited = false;
+let tokenClient;
+let accessToken = null;
 
-// Google API 로드
-function loadGoogleApi() {
-    gapi.load('client:auth2', initGoogleClient);
+// gapi 초기화
+function gapiLoaded() {
+    gapi.load('client', initializeGapiClient);
 }
 
-// Google Client 초기화
-function initGoogleClient() {
-    gapi.client.init({
+async function initializeGapiClient() {
+    await gapi.client.init({
         apiKey: GOOGLE_API_KEY,
-        clientId: GOOGLE_CLIENT_ID,
         discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-        scope: SCOPES
-    }).then(() => {
-        isGoogleApiLoaded = true;
-        const authInstance = gapi.auth2.getAuthInstance();
-        isGoogleSignedIn = authInstance.isSignedIn.get();
-    }).catch(error => {
-        console.error('Google API 초기화 오류:', error);
     });
+    gapiInited = true;
+}
+
+// GIS (Google Identity Services) 초기화
+function gisLoaded() {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: SCOPES,
+        callback: (response) => {
+            if (response.error !== undefined) {
+                console.error('토큰 오류:', response);
+                showToast('구글 로그인 오류가 발생했습니다');
+                return;
+            }
+            accessToken = response.access_token;
+            // 로그인 성공 후 파일 선택 창 열기
+            document.getElementById('photoInput').click();
+        },
+    });
+    gisInited = true;
 }
 
 // 사진 업로드 버튼 클릭
 function uploadPhoto() {
-    if (!isGoogleApiLoaded) {
-        loadGoogleApi();
-        setTimeout(() => {
-            uploadPhoto();
-        }, 1000);
+    if (!gapiInited || !gisInited) {
+        showToast('Google API 로딩 중입니다. 잠시 후 다시 시도해주세요.');
         return;
     }
 
-    const authInstance = gapi.auth2.getAuthInstance();
-
-    if (!authInstance.isSignedIn.get()) {
-        // 구글 로그인
-        authInstance.signIn().then(() => {
-            document.getElementById('photoInput').click();
-        }).catch(error => {
-            console.error('로그인 오류:', error);
-            showToast('구글 로그인이 필요합니다');
-        });
+    if (accessToken === null) {
+        // 로그인 필요
+        tokenClient.requestAccessToken({prompt: 'consent'});
     } else {
+        // 이미 로그인됨
         document.getElementById('photoInput').click();
     }
 }
@@ -814,6 +818,13 @@ function uploadPhoto() {
 async function handlePhotoSelect(event) {
     const files = event.target.files;
     if (files.length === 0) return;
+
+    // 토큰이 없으면 다시 로그인
+    if (!accessToken) {
+        showToast('로그인이 필요합니다');
+        tokenClient.requestAccessToken({prompt: 'consent'});
+        return;
+    }
 
     const uploadProgress = document.getElementById('uploadProgress');
     const uploadStatus = document.getElementById('uploadStatus');
@@ -862,7 +873,7 @@ function uploadToGoogleDrive(file) {
 
         fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
             method: 'POST',
-            headers: new Headers({ 'Authorization': 'Bearer ' + gapi.auth.getToken().access_token }),
+            headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
             body: form
         })
         .then(response => response.json())
@@ -877,10 +888,13 @@ function uploadToGoogleDrive(file) {
     });
 }
 
-// 페이지 로드 시 Google API 초기화
+// 페이지 로드 시 초기화
 window.addEventListener('load', () => {
     if (typeof gapi !== 'undefined') {
-        loadGoogleApi();
+        gapiLoaded();
+    }
+    if (typeof google !== 'undefined' && google.accounts) {
+        gisLoaded();
     }
 });
 
