@@ -193,14 +193,21 @@ function openTmap() {
 }
 
 function openKakaoNavi() {
-    // 순천아모르웨딩컨벤션
+    // 순천아모르웨딩컨벤션 좌표
     const placeName = '순천아모르웨딩컨벤션';
-    const address = '전남 순천시 서면 압곡길 94';
+    const latitude = 34.9471;  // 위도
+    const longitude = 127.4647; // 경도
 
-    // 카카오내비 앱 스킴 (카카오맵 검색)
-    const kakaoMapUrl = `https://m.map.kakao.com/actions/searchView?q=${encodeURIComponent(placeName)}&sort=0#!/all/map/place`;
-    window.open(kakaoMapUrl, '_blank');
-    // window.location.href = kakaoMapUrl;
+    // 카카오내비 앱 스킴 (좌표로 목적지 설정)
+    const kakaoNaviUrl = `kakaomap://route?ep=${latitude},${longitude}&by=CAR`;
+
+    // 앱 스킴 시도
+    window.location.href = kakaoNaviUrl;
+
+    // 1초 후 앱이 안 열리면 카카오맵 웹으로 폴백
+    setTimeout(() => {
+        window.open(`https://map.kakao.com/link/to/${encodeURIComponent(placeName)},${latitude},${longitude}`, '_blank');
+    }, 1000);
 }
 
 function viewMapImage() {
@@ -845,8 +852,9 @@ function initNaverMap() {
         return;
     }
 
-    // 순천아모르웨딩컨벤션 좌표
-    const weddingLocation = new naver.maps.LatLng(34.9471, 127.4647);
+    // 순천아모르웨딩컨벤션 좌표 (전남 순천시 서면 압곡길 94)
+    // 좌표: 위도(latitude), 경도(longitude) 순서
+    const weddingLocation = new naver.maps.LatLng(34.947753, 127.464416);
 
     // 지도 옵션
     const mapOptions = {
