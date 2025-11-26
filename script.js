@@ -24,13 +24,41 @@ const galleryImages = [
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
-    loadMessages();
-    initScrollAnimation();
-    initCalendar();
-    initCountdown();
-    initGallery();
-    initNaverMap();
+    initOpeningAnimation();
 });
+
+// 오프닝 애니메이션 초기화
+function initOpeningAnimation() {
+    const splash = document.getElementById('splash');
+    
+    if (!splash) {
+        // 요소가 없으면 바로 메인 콘텐츠 초기화
+        loadMessages();
+        initScrollAnimation();
+        initCalendar();
+        initCountdown();
+        initGallery();
+        initNaverMap();
+        return;
+    }
+    
+    // body overflow 숨김 (오프닝 중 스크롤 방지)
+    document.body.style.overflow = 'hidden';
+    
+    // 오프닝 애니메이션 완료 후 (6초 후) 오프닝 숨기고 메인 콘텐츠 표시
+    setTimeout(function() {
+        splash.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        
+        // 메인 콘텐츠 초기화
+        loadMessages();
+        initScrollAnimation();
+        initCalendar();
+        initCountdown();
+        initGallery();
+        initNaverMap();
+    }, 6000); // 3초(img1) + 3초(img2) = 6초
+}
 
 // 갤러리 초기화
 function initGallery() {
