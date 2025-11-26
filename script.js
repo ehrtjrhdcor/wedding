@@ -22,6 +22,8 @@ const galleryImages = [
     'images/17.jpg'
 ];
 
+let isMusicPlaying = false;
+
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
     initOpeningAnimation();
@@ -31,32 +33,60 @@ document.addEventListener('DOMContentLoaded', function() {
 // 배경음악 초기화
 function initBackgroundMusic() {
     const music = document.getElementById('backgroundMusic');
+    const soundIcon = document.getElementById('soundIcon');
     
-    if (!music) return;
+    if (!music || !soundIcon) return;
     
     // 볼륨 설정
     music.volume = 0.5;
+    
+    // 자동 재생 시도
+    const playPromise = music.play();
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            isMusicPlaying = true;
+            updateSoundIcon(true);
+        }).catch(() => {
+            isMusicPlaying = false;
+            updateSoundIcon(false);
+        });
+    } else {
+        isMusicPlaying = !music.paused;
+        updateSoundIcon(isMusicPlaying);
+    }
+}
+
+function updateSoundIcon(isPlaying) {
+    const soundIcon = document.getElementById('soundIcon');
+    if (!soundIcon) return;
+    
+    if (isPlaying) {
+        soundIcon.src = 'images/soundon.svg';
+        soundIcon.alt = '사운드 켜기';
+    } else {
+        soundIcon.src = 'images/soundoff.svg';
+        soundIcon.alt = '사운드 끄기';
+    }
 }
 
 // 사운드 토글 함수
 function toggleSound() {
     const music = document.getElementById('backgroundMusic');
-    const soundIcon = document.getElementById('soundIcon');
     
-    if (!music || !soundIcon) return;
+    if (!music) return;
     
     if (music.paused) {
         // 음악 재생
         music.play().catch(function(error) {
             console.log('음악 재생 실패:', error);
         });
-        soundIcon.src = 'images/soundon.svg';
-        soundIcon.alt = '사운드 켜기';
+        isMusicPlaying = true;
+        updateSoundIcon(true);
     } else {
         // 음악 정지
         music.pause();
-        soundIcon.src = 'images/soundoff.svg';
-        soundIcon.alt = '사운드 끄기';
+        isMusicPlaying = false;
+        updateSoundIcon(false);
     }
 }
 
