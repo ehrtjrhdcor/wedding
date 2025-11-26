@@ -23,6 +23,7 @@ const galleryImages = [
 ];
 
 let isMusicPlaying = false;
+let isFirstInteractionHandled = false;
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
@@ -46,13 +47,20 @@ function initBackgroundMusic() {
         playPromise.then(() => {
             isMusicPlaying = true;
             updateSoundIcon(true);
+            isFirstInteractionHandled = true;
         }).catch(() => {
             isMusicPlaying = false;
             updateSoundIcon(false);
+            attachFirstInteractionListener();
         });
     } else {
         isMusicPlaying = !music.paused;
         updateSoundIcon(isMusicPlaying);
+        if (!music.paused) {
+            isFirstInteractionHandled = true;
+        } else {
+            attachFirstInteractionListener();
+        }
     }
 }
 
@@ -69,6 +77,34 @@ function updateSoundIcon(isPlaying) {
     }
 }
 
+function attachFirstInteractionListener() {
+    if (isFirstInteractionHandled) return;
+    const handler = () => {
+        if (!isFirstInteractionHandled) {
+            startMusicAfterInteraction();
+        }
+        document.removeEventListener('click', handler);
+        document.removeEventListener('touchstart', handler);
+        document.removeEventListener('keydown', handler);
+    };
+    document.addEventListener('click', handler, { once: true });
+    document.addEventListener('touchstart', handler, { once: true });
+    document.addEventListener('keydown', handler, { once: true });
+}
+
+function startMusicAfterInteraction() {
+    const music = document.getElementById('backgroundMusic');
+    if (!music) return;
+    music.play().then(() => {
+        isMusicPlaying = true;
+        isFirstInteractionHandled = true;
+        updateSoundIcon(true);
+    }).catch(() => {
+        isMusicPlaying = false;
+        updateSoundIcon(false);
+    });
+}
+
 // 사운드 토글 함수
 function toggleSound() {
     const music = document.getElementById('backgroundMusic');
@@ -81,6 +117,7 @@ function toggleSound() {
             console.log('음악 재생 실패:', error);
         });
         isMusicPlaying = true;
+        isFirstInteractionHandled = true;
         updateSoundIcon(true);
     } else {
         // 음악 정지
@@ -107,6 +144,9 @@ function initOpeningAnimation() {
     
     // body overflow 숨김 (오프닝 중 스크롤 방지)
     document.body.style.overflow = 'hidden';
+    
+    // 오프닝 애니메이션 시작과 동시에 음악 재생 시도
+    startMusicAfterInteraction();
     
     // 두 번째 이미지 중앙 정렬 강제 적용
     const img2 = document.querySelector('.splash .img2');
