@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initNaverMap();
 });
 
-
 // 갤러리 초기화
 function initGallery() {
     // 초기에는 4개만 보이도록 설정 (이미 HTML에서 gallery-item-hidden 클래스가 적용되어 있음)
@@ -139,6 +138,199 @@ function openModal(index) {
 
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
+    
+    // 모바일 이미지 확대 방지
+    preventImageZoom(modal);
+    
+    // 이미지 캡처 방지
+    preventImageCapture(modal, modalImg);
+}
+
+// 모바일 이미지 확대 방지 함수
+function preventImageZoom(modal) {
+    let lastTouchEnd = 0;
+    
+    // 더블탭 줌 방지
+    modal.addEventListener('touchend', function(event) {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
+    
+    // 핀치 줌 방지
+    modal.addEventListener('touchmove', function(event) {
+        if (event.touches.length > 1) {
+            event.preventDefault();
+        }
+    }, { passive: false });
+    
+    // 이미지 드래그 방지
+    const modalImg = document.getElementById('modalImage');
+    if (modalImg) {
+        modalImg.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+        
+        modalImg.addEventListener('gesturestart', function(event) {
+            event.preventDefault();
+        });
+        
+        modalImg.addEventListener('gesturechange', function(event) {
+            event.preventDefault();
+        });
+        
+        modalImg.addEventListener('gestureend', function(event) {
+            event.preventDefault();
+        });
+    }
+}
+
+// 이미지 캡처 방지 함수
+function preventImageCapture(modal, modalImg) {
+    // 우클릭 방지
+    modal.addEventListener('contextmenu', function(event) {
+        event.preventDefault();
+        return false;
+    }, false);
+    
+    // 이미지 우클릭 방지
+    if (modalImg) {
+        modalImg.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+            return false;
+        }, false);
+        
+        // 이미지 드래그 방지
+        modalImg.addEventListener('dragstart', function(event) {
+            event.preventDefault();
+            return false;
+        }, false);
+        
+        // 이미지 선택 방지
+        modalImg.addEventListener('selectstart', function(event) {
+            event.preventDefault();
+            return false;
+        }, false);
+        
+        // 이미지 복사 방지
+        modalImg.addEventListener('copy', function(event) {
+            event.preventDefault();
+            return false;
+        }, false);
+    }
+    
+    // 키보드 단축키 방지 (F12, Ctrl+S, Ctrl+P 등)
+    modal.addEventListener('keydown', function(event) {
+        // F12 (개발자 도구)
+        if (event.key === 'F12') {
+            event.preventDefault();
+            return false;
+        }
+        // Ctrl+S (저장)
+        if (event.ctrlKey && event.key === 's') {
+            event.preventDefault();
+            return false;
+        }
+        // Ctrl+P (인쇄)
+        if (event.ctrlKey && event.key === 'p') {
+            event.preventDefault();
+            return false;
+        }
+        // Ctrl+Shift+I (개발자 도구)
+        if (event.ctrlKey && event.shiftKey && event.key === 'I') {
+            event.preventDefault();
+            return false;
+        }
+        // Ctrl+Shift+C (요소 검사)
+        if (event.ctrlKey && event.shiftKey && event.key === 'C') {
+            event.preventDefault();
+            return false;
+        }
+        // Ctrl+Shift+J (콘솔)
+        if (event.ctrlKey && event.shiftKey && event.key === 'J') {
+            event.preventDefault();
+            return false;
+        }
+        // Ctrl+U (소스 보기)
+        if (event.ctrlKey && event.key === 'u') {
+            event.preventDefault();
+            return false;
+        }
+    }, false);
+    
+    // 탭 전환 감지 (다른 앱으로 전환 시 모달 닫기 및 이미지 숨기기)
+    const handleVisibilityChange = function() {
+        if (document.hidden) {
+            // 즉시 이미지를 숨기거나 블러 처리
+            if (modalImg) {
+                modalImg.style.opacity = '0';
+                modalImg.style.filter = 'blur(20px)';
+            }
+            // 짧은 지연 후 모달 닫기
+            setTimeout(function() {
+                closeModal();
+            }, 100);
+        } else {
+            // 다시 보일 때 이미지 복원
+            if (modalImg) {
+                modalImg.style.opacity = '1';
+                modalImg.style.filter = 'none';
+            }
+        }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // 창 포커스 잃음 감지 (모바일에서 앱 전환 시)
+    const handleBlur = function() {
+        if (modalImg) {
+            modalImg.style.opacity = '0';
+            modalImg.style.filter = 'blur(20px)';
+        }
+        setTimeout(function() {
+            closeModal();
+        }, 100);
+    };
+    window.addEventListener('blur', handleBlur);
+    
+    // 페이지 언로드 시 이미지 숨기기
+    const handleBeforeUnload = function() {
+        if (modalImg) {
+            modalImg.style.opacity = '0';
+            modalImg.style.filter = 'blur(20px)';
+        }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    // 페이지 숨김 감지 (iOS Safari 등)
+    const handlePageHide = function() {
+        if (modalImg) {
+            modalImg.style.opacity = '0';
+            modalImg.style.filter = 'blur(20px)';
+        }
+        closeModal();
+    };
+    window.addEventListener('pagehide', handlePageHide);
+    
+    // 개발자 도구 감지 시도 (간단한 방법)
+    let devtools = {open: false, orientation: null};
+    const threshold = 160;
+    setInterval(function() {
+        if (window.outerHeight - window.innerHeight > threshold || 
+            window.outerWidth - window.innerWidth > threshold) {
+            if (!devtools.open) {
+                devtools.open = true;
+                closeModal();
+            }
+        } else {
+            if (devtools.open) {
+                devtools.open = false;
+            }
+        }
+    }, 500);
 }
 
 function closeModal() {
