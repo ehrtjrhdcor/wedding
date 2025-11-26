@@ -22,6 +22,35 @@ body {
     overflow-x: hidden;
 }
 
+/* 사운드 토글 버튼 */
+.sound-toggle-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 25px;
+    height: 25px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 10001;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s;
+}
+
+.sound-toggle-btn:hover {
+    opacity: 0.7;
+}
+
+.sound-toggle-btn img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    filter: brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+}
+
 /* 오프닝 애니메이션 */
 .splash {
     position: fixed;
@@ -34,39 +63,176 @@ body {
     z-index: 10000;
 }
 
-.splash .img {
+.splash::before {
+    content: '';
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    background-image: url('images/5.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(0px);
+    opacity: 0.3;
+    z-index: 0;
+    transition: background-image 0.2s ease;
+    animation: blurBackground 1.5s 1.8s linear forwards;
+    will-change: filter;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+.splash::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('images/6.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(0px);
+    opacity: 0;
+    z-index: 0;
+    transition: opacity 0.2s ease;
+    animation: blurBackground2 1.5s 3.8s linear forwards;
+    will-change: filter;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+@keyframes blurBackground {
+    0% {
+        filter: blur(0px);
+    }
+    20% {
+        filter: blur(2px);
+    }
+    40% {
+        filter: blur(4px);
+    }
+    60% {
+        filter: blur(6px);
+    }
+    80% {
+        filter: blur(8px);
+    }
+    100% {
+        filter: blur(10px);
+    }
+}
+
+@keyframes blurBackground2 {
+    0% {
+        filter: blur(0px);
+    }
+    20% {
+        filter: blur(2px);
+    }
+    40% {
+        filter: blur(4px);
+    }
+    60% {
+        filter: blur(6px);
+    }
+    80% {
+        filter: blur(8px);
+    }
+    100% {
+        filter: blur(10px);
+    }
+}
+
+.splash.show-second::before {
     opacity: 0;
 }
 
+.splash.show-second::after {
+    opacity: 0.3;
+}
+
+.splash .img {
+    position: absolute;
+    width: 390px;
+    max-width: 390px;
+    height: 844px;
+    max-height: 844px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    opacity: 0;
+    z-index: 1;
+}
+
 .splash .img1 {
-    animation: zoomFade 3s forwards;
+    opacity: 1;
+    z-index: 2;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 767px) {
+    .splash .img {
+        width: 390px;
+        max-width: 100vw;
+        height: 844px;
+        max-height: 100vh;
+    }
+    
+    .splash .img2 {
+        width: 390px;
+        max-width: 100vw;
+        height: 844px;
+        max-height: 100vh;
+    }
+}
+
+.splash .img1 {
+    animation: zoomFade 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    z-index: 2;
+    will-change: transform, opacity;
 }
 
 .splash .img2 {
-    animation: fadeIn 3s 3s forwards;
+    position: absolute !important;
+    animation: zoomFade 2s 2.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    z-index: 3;
+    will-change: transform, opacity;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 390px;
+    max-width: 390px;
+    height: 844px;
+    max-height: 844px;
+    object-fit: cover;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 @keyframes zoomFade {
     from {
-        transform: scale(1);
+        transform: translate(-50%, -50%) scale(1) !important;
         opacity: 1;
     }
     to {
-        transform: scale(1.2);
+        transform: translate(-50%, -50%) scale(1.2) !important;
         opacity: 0;
     }
 }
 
 @keyframes fadeIn {
-    from {
+    0% {
         opacity: 0;
+        transform: translate(-50%, -50%) !important;
     }
-    to {
+    100% {
         opacity: 1;
+        transform: translate(-50%, -50%) !important;
     }
 }
 

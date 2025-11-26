@@ -39,6 +39,16 @@
     </script>
 </head>
 <body>
+    <!-- 배경음악 -->
+    <audio id="backgroundMusic" loop>
+        <source src="weddingmusic.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- 사운드 토글 버튼 -->
+    <button class="sound-toggle-btn" id="soundToggleBtn" onclick="toggleSound()">
+        <img src="images/soundon.svg" alt="사운드 켜기" id="soundIcon">
+    </button>
+    
     <!-- 오프닝 애니메이션 -->
     <div class="splash" id="splash">
         <img src="images/5.jpg" alt="오프닝 이미지 1" class="img img1">

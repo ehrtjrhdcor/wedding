@@ -25,7 +25,40 @@ const galleryImages = [
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
     initOpeningAnimation();
+    initBackgroundMusic();
 });
+
+// 배경음악 초기화
+function initBackgroundMusic() {
+    const music = document.getElementById('backgroundMusic');
+    
+    if (!music) return;
+    
+    // 볼륨 설정
+    music.volume = 0.5;
+}
+
+// 사운드 토글 함수
+function toggleSound() {
+    const music = document.getElementById('backgroundMusic');
+    const soundIcon = document.getElementById('soundIcon');
+    
+    if (!music || !soundIcon) return;
+    
+    if (music.paused) {
+        // 음악 재생
+        music.play().catch(function(error) {
+            console.log('음악 재생 실패:', error);
+        });
+        soundIcon.src = 'images/soundon.svg';
+        soundIcon.alt = '사운드 켜기';
+    } else {
+        // 음악 정지
+        music.pause();
+        soundIcon.src = 'images/soundoff.svg';
+        soundIcon.alt = '사운드 끄기';
+    }
+}
 
 // 오프닝 애니메이션 초기화
 function initOpeningAnimation() {
@@ -45,7 +78,40 @@ function initOpeningAnimation() {
     // body overflow 숨김 (오프닝 중 스크롤 방지)
     document.body.style.overflow = 'hidden';
     
-    // 오프닝 애니메이션 완료 후 (6초 후) 오프닝 숨기고 메인 콘텐츠 표시
+    // 두 번째 이미지 중앙 정렬 강제 적용
+    const img2 = document.querySelector('.splash .img2');
+    if (img2) {
+        img2.style.position = 'absolute';
+        img2.style.top = '50%';
+        img2.style.left = '50%';
+        img2.style.transform = 'translate(-50%, -50%)';
+    }
+    
+    // 블러 완료 시점(약 2.8초)에 두 번째 이미지 배경 표시 및 이미지 나타나기
+    setTimeout(function() {
+        splash.classList.add('show-second');
+        // 두 번째 이미지 중앙 정렬 강제 적용
+        if (img2) {
+            img2.style.setProperty('position', 'absolute', 'important');
+            img2.style.setProperty('top', '50%', 'important');
+            img2.style.setProperty('left', '50%', 'important');
+            img2.style.setProperty('transform', 'translate(-50%, -50%)', 'important');
+            img2.style.setProperty('margin', '0', 'important');
+            img2.style.setProperty('padding', '0', 'important');
+        }
+    }, 2800); // 블러 완료 시점 (1.6초 + 1.2초)
+    
+    // 애니메이션 시작 직후에도 중앙 정렬 확인
+    setTimeout(function() {
+        if (img2) {
+            img2.style.setProperty('top', '50%', 'important');
+            img2.style.setProperty('left', '50%', 'important');
+            img2.style.setProperty('transform', 'translate(-50%, -50%)', 'important');
+        }
+    }, 2900);
+    
+    // 오프닝 애니메이션 완료 후 오프닝 숨기고 메인 콘텐츠 표시
+    // 첫 번째: 2초, 블러: 1.6초 후 시작 1.2초, 두 번째: 2.8초 후 시작 2초 = 총 약 4.8초
     setTimeout(function() {
         splash.style.display = 'none';
         document.body.style.overflow = 'auto';
@@ -57,7 +123,7 @@ function initOpeningAnimation() {
         initCountdown();
         initGallery();
         initNaverMap();
-    }, 6000); // 3초(img1) + 3초(img2) = 6초
+    }, 4800); // 블러 완료 후 두 번째 이미지 완료까지
 }
 
 // 갤러리 초기화
