@@ -39,8 +39,25 @@
     </script>
 </head>
 <body>
+    <!-- theirmood 스타일 오프닝 레이어 -->
+    <div id="opening">
+        <div class="scene scene-1 scene--left">
+            <div class="scene-inner">
+                <img src="images/5.jpg" alt="scene1" class="scene-img">
+                <p class="scene-text">서로를 바라본 순간 우리가 시작되었습니다.</p>
+            </div>
+        </div>
+        <div class="scene scene-2 scene--right">
+            <div class="scene-inner">
+                <img src="images/6.jpg" alt="scene2" class="scene-img">
+                <p class="scene-text">함께 걷는 지금 이 길, 우리의 이야기가 이어집니다.</p>
+            </div>
+        </div>
+    </div>
+
+    <main id="content">
     <!-- 배경음악 -->
-    <audio id="backgroundMusic" loop>
+    <audio id="backgroundMusic" autoplay loop muted>
         <source src="weddingmusic.mp3" type="audio/mpeg">
     </audio>
     
@@ -48,12 +65,6 @@
     <button class="sound-toggle-btn" id="soundToggleBtn" onclick="toggleSound()">
         <img src="images/soundon.svg" alt="사운드 켜기" id="soundIcon">
     </button>
-    
-    <!-- 오프닝 애니메이션 -->
-    <div class="splash" id="splash">
-        <img src="images/5.jpg" alt="오프닝 이미지 1" class="img img1">
-        <img src="images/6.jpg" alt="오프닝 이미지 2" class="img img2">
-    </div>
     
     <!-- 메인 헤더 -->
     <section class="hero">
@@ -373,6 +384,7 @@
             카카오톡으로 초대장 보내기
         </button>
     </div>
+    </main>
 
     <script src="script.js"></script>
 </body>

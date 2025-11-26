@@ -27,8 +27,14 @@ let isFirstInteractionHandled = false;
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
-    initOpeningAnimation();
     initBackgroundMusic();
+    initOpeningScenes();
+    loadMessages();
+    initScrollAnimation();
+    initCalendar();
+    initCountdown();
+    initGallery();
+    initNaverMap();
 });
 
 // 배경음악 초기화
@@ -40,14 +46,15 @@ function initBackgroundMusic() {
     
     // 볼륨 설정
     music.volume = 0.5;
+    music.muted = true;
     
     // 자동 재생 시도
     const playPromise = music.play();
     if (playPromise !== undefined) {
         playPromise.then(() => {
             isMusicPlaying = true;
-            updateSoundIcon(true);
-            isFirstInteractionHandled = true;
+            updateSoundIcon(false);
+            attachFirstInteractionListener();
         }).catch(() => {
             isMusicPlaying = false;
             updateSoundIcon(false);
@@ -55,12 +62,8 @@ function initBackgroundMusic() {
         });
     } else {
         isMusicPlaying = !music.paused;
-        updateSoundIcon(isMusicPlaying);
-        if (!music.paused) {
-            isFirstInteractionHandled = true;
-        } else {
-            attachFirstInteractionListener();
-        }
+        updateSoundIcon(false);
+        attachFirstInteractionListener();
     }
 }
 
@@ -95,6 +98,7 @@ function attachFirstInteractionListener() {
 function startMusicAfterInteraction() {
     const music = document.getElementById('backgroundMusic');
     if (!music) return;
+    music.muted = false;
     music.play().then(() => {
         isMusicPlaying = true;
         isFirstInteractionHandled = true;
@@ -111,8 +115,9 @@ function toggleSound() {
     
     if (!music) return;
     
-    if (music.paused) {
+    if (music.paused || music.muted) {
         // 음악 재생
+        music.muted = false;
         music.play().catch(function(error) {
             console.log('음악 재생 실패:', error);
         });
@@ -127,73 +132,50 @@ function toggleSound() {
     }
 }
 
-// 오프닝 애니메이션 초기화
-function initOpeningAnimation() {
-    const splash = document.getElementById('splash');
-    
-    if (!splash) {
-        // 요소가 없으면 바로 메인 콘텐츠 초기화
-        loadMessages();
-        initScrollAnimation();
-        initCalendar();
-        initCountdown();
-        initGallery();
-        initNaverMap();
+// 오프닝 장면 애니메이션
+function initOpeningScenes() {
+    const opening = document.getElementById('opening');
+    const scenes = opening ? Array.from(opening.querySelectorAll('.scene')) : [];
+    if (!opening || scenes.length === 0) {
         return;
     }
-    
-    // body overflow 숨김 (오프닝 중 스크롤 방지)
-    document.body.style.overflow = 'hidden';
-    
-    // 오프닝 애니메이션 시작과 동시에 음악 재생 시도
-    startMusicAfterInteraction();
-    
-    // 두 번째 이미지 중앙 정렬 강제 적용
-    const img2 = document.querySelector('.splash .img2');
-    if (img2) {
-        img2.style.position = 'absolute';
-        img2.style.top = '50%';
-        img2.style.left = '50%';
-        img2.style.transform = 'translate(-50%, -50%)';
-    }
-    
-    // 블러 완료 시점(약 2.8초)에 두 번째 이미지 배경 표시 및 이미지 나타나기
-    setTimeout(function() {
-        splash.classList.add('show-second');
-        // 두 번째 이미지 중앙 정렬 강제 적용
-        if (img2) {
-            img2.style.setProperty('position', 'absolute', 'important');
-            img2.style.setProperty('top', '50%', 'important');
-            img2.style.setProperty('left', '50%', 'important');
-            img2.style.setProperty('transform', 'translate(-50%, -50%)', 'important');
-            img2.style.setProperty('margin', '0', 'important');
-            img2.style.setProperty('padding', '0', 'important');
+
+    const DELAY_START = 200;
+    const HOLD = 2500;
+    const TRANSITION = 900;
+    const END_GAP = 400;
+    const FADE_DURATION = 900;
+
+    scenes.forEach(scene => scene.classList.remove('show', 'hide'));
+
+    const playScene = (index, delay) => {
+        if (!scenes[index]) {
+            setTimeout(() => {
+                opening.classList.add('fade-out');
+                setTimeout(() => {
+                    opening.style.display = 'none';
+                }, FADE_DURATION);
+            }, END_GAP);
+            return;
         }
-    }, 2800); // 블러 완료 시점 (1.6초 + 1.2초)
-    
-    // 애니메이션 시작 직후에도 중앙 정렬 확인
-    setTimeout(function() {
-        if (img2) {
-            img2.style.setProperty('top', '50%', 'important');
-            img2.style.setProperty('left', '50%', 'important');
-            img2.style.setProperty('transform', 'translate(-50%, -50%)', 'important');
-        }
-    }, 2900);
-    
-    // 오프닝 애니메이션 완료 후 오프닝 숨기고 메인 콘텐츠 표시
-    // 첫 번째: 2초, 블러: 1.6초 후 시작 1.2초, 두 번째: 2.8초 후 시작 2초 = 총 약 4.8초
-    setTimeout(function() {
-        splash.style.display = 'none';
-        document.body.style.overflow = 'auto';
-        
-        // 메인 콘텐츠 초기화
-        loadMessages();
-        initScrollAnimation();
-        initCalendar();
-        initCountdown();
-        initGallery();
-        initNaverMap();
-    }, 4800); // 블러 완료 후 두 번째 이미지 완료까지
+
+        setTimeout(() => {
+            const currentScene = scenes[index];
+            currentScene.classList.add('show');
+
+            setTimeout(() => {
+                currentScene.classList.remove('show');
+                currentScene.classList.add('hide');
+            }, HOLD);
+
+            setTimeout(() => {
+                currentScene.classList.remove('hide');
+                playScene(index + 1, 0);
+            }, HOLD + TRANSITION);
+        }, delay);
+    };
+
+    playScene(0, DELAY_START);
 }
 
 // 갤러리 초기화
