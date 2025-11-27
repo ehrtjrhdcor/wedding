@@ -41,6 +41,9 @@
 <body>
     <!-- theirmood 스타일 오프닝 레이어 -->
     <div id="opening">
+        <div class="touch-prompt" id="touchPrompt">
+            <p>화면을 터치해주세요</p>
+        </div>
         <div class="scene scene-1 scene--left">
             <div class="scene-inner">
                 <img src="images/5.jpg" alt="scene1" class="scene-img">
@@ -65,6 +68,12 @@
     <button class="sound-toggle-btn" id="soundToggleBtn" onclick="toggleSound()">
         <img src="images/soundon.svg" alt="사운드 켜기" id="soundIcon">
     </button>
+    
+    <!-- 스크롤 유도 -->
+    <div class="scroll-indicator" id="scrollIndicator">
+        <p>아래로 스크롤해주세요</p>
+        <div class="scroll-arrow">↓</div>
+    </div>
     
     <!-- 메인 헤더 -->
     <section class="hero">

@@ -28,7 +28,7 @@ let isFirstInteractionHandled = false;
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
     initBackgroundMusic();
-    initOpeningScenes();
+    initTouchPrompt();
     loadMessages();
     initScrollAnimation();
     initCalendar();
@@ -47,22 +47,15 @@ function initBackgroundMusic() {
     // 볼륨 설정
     music.volume = 0.5;
     music.muted = true;
+    music.pause();
     
-    // 자동 재생 시도
-    const playPromise = music.play();
-    if (playPromise !== undefined) {
-        playPromise.then(() => {
-            isMusicPlaying = true;
-            updateSoundIcon(false);
-            attachFirstInteractionListener();
-        }).catch(() => {
-            isMusicPlaying = false;
-            updateSoundIcon(false);
-            attachFirstInteractionListener();
-        });
-    } else {
-        isMusicPlaying = !music.paused;
-        updateSoundIcon(false);
+    // 초기 아이콘 설정
+    isMusicPlaying = false;
+    updateSoundIcon(false);
+    
+    // 터치 유도 화면이 없으면 원래 방식대로 첫 상호작용 리스너 추가
+    const touchPrompt = document.getElementById('touchPrompt');
+    if (!touchPrompt) {
         attachFirstInteractionListener();
     }
 }
@@ -98,15 +91,19 @@ function attachFirstInteractionListener() {
 function startMusicAfterInteraction() {
     const music = document.getElementById('backgroundMusic');
     if (!music) return;
-    music.muted = false;
-    music.play().then(() => {
-        isMusicPlaying = true;
-        isFirstInteractionHandled = true;
-        updateSoundIcon(true);
-    }).catch(() => {
-        isMusicPlaying = false;
-        updateSoundIcon(false);
-    });
+    
+    // 1초 후 음악 재생
+    setTimeout(() => {
+        music.muted = false;
+        music.play().then(() => {
+            isMusicPlaying = true;
+            isFirstInteractionHandled = true;
+            updateSoundIcon(true);
+        }).catch(() => {
+            isMusicPlaying = false;
+            updateSoundIcon(false);
+        });
+    }, 1000);
 }
 
 // 사운드 토글 함수
@@ -133,6 +130,54 @@ function toggleSound() {
 }
 
 // 오프닝 장면 애니메이션
+// 터치 유도 화면 초기화
+function initTouchPrompt() {
+    const touchPrompt = document.getElementById('touchPrompt');
+    if (!touchPrompt) {
+        // 터치 유도 화면이 없으면 바로 오프닝 애니메이션 시작
+        initOpeningScenes();
+        return;
+    }
+
+    // 터치 이벤트 리스너 추가
+    const handleTouch = () => {
+        if (touchPrompt.classList.contains('hide')) return;
+        
+        // 터치 유도 화면 숨기기
+        touchPrompt.classList.add('hide');
+        
+        // 1초 후 음악 재생
+        setTimeout(() => {
+            startMusicAfterTouch();
+        }, 1000);
+        
+        // 오프닝 애니메이션 시작
+        setTimeout(() => {
+            initOpeningScenes();
+        }, 1000);
+    };
+
+    touchPrompt.addEventListener('click', handleTouch);
+    touchPrompt.addEventListener('touchstart', handleTouch);
+}
+
+// 터치 후 음악 재생
+function startMusicAfterTouch() {
+    const music = document.getElementById('backgroundMusic');
+    if (!music) return;
+    
+    // startMusicAfterInteraction()와 동일한 로직 사용
+    music.muted = false;
+    music.play().then(() => {
+        isMusicPlaying = true;
+        isFirstInteractionHandled = true;
+        updateSoundIcon(true);
+    }).catch(() => {
+        isMusicPlaying = false;
+        updateSoundIcon(false);
+    });
+}
+
 function initOpeningScenes() {
     const opening = document.getElementById('opening');
     const scenes = opening ? Array.from(opening.querySelectorAll('.scene')) : [];
@@ -154,6 +199,8 @@ function initOpeningScenes() {
                 opening.classList.add('fade-out');
                 setTimeout(() => {
                     opening.style.display = 'none';
+                    // 오프닝 애니메이션 종료 후 스크롤 유도 표시
+                    showScrollIndicator();
                 }, FADE_DURATION);
             }, END_GAP);
             return;
@@ -176,6 +223,49 @@ function initOpeningScenes() {
     };
 
     playScene(0, DELAY_START);
+}
+
+// 스크롤 유도 표시
+function showScrollIndicator() {
+    const scrollIndicator = document.getElementById('scrollIndicator');
+    if (!scrollIndicator) return;
+    
+    // 약간의 딜레이 후 표시
+    setTimeout(() => {
+        scrollIndicator.classList.add('show');
+        initScrollIndicator();
+    }, 500);
+}
+
+// 스크롤 유도 이벤트 리스너
+function initScrollIndicator() {
+    const scrollIndicator = document.getElementById('scrollIndicator');
+    if (!scrollIndicator) return;
+    
+    let hasScrolled = false;
+    
+    const handleScroll = () => {
+        if (!hasScrolled && window.scrollY > 50) {
+            hasScrolled = true;
+            scrollIndicator.classList.remove('show');
+            scrollIndicator.classList.add('hide');
+            
+            // 애니메이션 완료 후 제거
+            setTimeout(() => {
+                scrollIndicator.style.display = 'none';
+            }, 500);
+            
+            // 스크롤 이벤트 리스너 제거
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('wheel', handleScroll);
+            window.removeEventListener('touchmove', handleScroll);
+        }
+    };
+    
+    // 스크롤 이벤트 리스너 추가
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('wheel', handleScroll, { passive: true });
+    window.addEventListener('touchmove', handleScroll, { passive: true });
 }
 
 // 갤러리 초기화
