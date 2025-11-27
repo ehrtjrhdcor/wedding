@@ -1846,9 +1846,50 @@ h3.venue-name {
     animation-delay: 0.35s;
 }
 
-.scene--right.show .scene-text {
+.scene--right.show > .scene-inner > .scene-text {
     animation: textRightFlow 2s ease forwards;
     animation-delay: 0.35s;
+}
+
+/* 두 번째 씬 문구 이미지 */
+.scene-text--top,
+.scene-text--bottom {
+    max-width: 80%;
+    height: auto;
+}
+
+/* 위쪽 문구: 왼쪽에서 오른쪽으로 */
+.scene.show .scene-text--top {
+    animation: textLeftToRight 2s ease forwards;
+    animation-delay: 0.35s;
+}
+
+/* 아래쪽 문구: 오른쪽에서 왼쪽으로 */
+.scene.show .scene-text--bottom {
+    animation: textRightToLeft 2s ease forwards;
+    animation-delay: 0.5s;
+}
+
+@keyframes textLeftToRight {
+    0% {
+        opacity: 0;
+        transform: translateX(-70px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes textRightToLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(70px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .scene--left.show .scene-img,
@@ -1894,13 +1935,9 @@ h3.venue-name {
         opacity: 0;
         transform: translateX(-70px);
     }
-    60% {
-        opacity: 1;
-        transform: translateX(20px);
-    }
     100% {
-        opacity: 0;
-        transform: translateX(80px);
+        opacity: 1;
+        transform: translateX(0);
     }
 }
 
@@ -1909,13 +1946,9 @@ h3.venue-name {
         opacity: 0;
         transform: translateX(70px);
     }
-    60% {
-        opacity: 1;
-        transform: translateX(-20px);
-    }
     100% {
-        opacity: 0;
-        transform: translateX(-80px);
+        opacity: 1;
+        transform: translateX(0);
     }
 }
 
