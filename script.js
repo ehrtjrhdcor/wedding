@@ -228,11 +228,23 @@ function initOpeningScenes() {
 // 스크롤 유도 표시
 function showScrollIndicator() {
     const scrollIndicator = document.getElementById('scrollIndicator');
-    if (!scrollIndicator) return;
+    if (!scrollIndicator) {
+        console.log('스크롤 유도 요소를 찾을 수 없습니다.');
+        return;
+    }
+    
+    // 스크롤 위치를 맨 위로 리셋
+    window.scrollTo(0, 0);
     
     // 약간의 딜레이 후 표시
     setTimeout(() => {
+        scrollIndicator.style.display = 'flex';
+        scrollIndicator.style.visibility = 'visible';
+        scrollIndicator.style.opacity = '1';
+        scrollIndicator.classList.remove('hide');
         scrollIndicator.classList.add('show');
+        console.log('스크롤 유도 요소 표시 완료', scrollIndicator);
+        console.log('위치:', scrollIndicator.getBoundingClientRect());
         initScrollIndicator();
     }, 500);
 }
@@ -243,9 +255,19 @@ function initScrollIndicator() {
     if (!scrollIndicator) return;
     
     let hasScrolled = false;
+    let isReady = false;
+    
+    // 스크롤 유도 요소가 표시된 후 1초 후부터 스크롤 감지 시작
+    setTimeout(() => {
+        isReady = true;
+    }, 1000);
     
     const handleScroll = () => {
-        if (!hasScrolled && window.scrollY > 50) {
+        // 준비되지 않았거나 이미 스크롤했으면 무시
+        if (!isReady || hasScrolled) return;
+        
+        // 실제 스크롤이 발생했는지 확인 (스크롤 위치가 30px 이상일 때)
+        if (window.scrollY > 30 || document.documentElement.scrollTop > 30) {
             hasScrolled = true;
             scrollIndicator.classList.remove('show');
             scrollIndicator.classList.add('hide');
@@ -258,14 +280,12 @@ function initScrollIndicator() {
             // 스크롤 이벤트 리스너 제거
             window.removeEventListener('scroll', handleScroll);
             window.removeEventListener('wheel', handleScroll);
-            window.removeEventListener('touchmove', handleScroll);
         }
     };
     
-    // 스크롤 이벤트 리스너 추가
+    // 스크롤 이벤트 리스너 추가 (touchmove 제거)
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('wheel', handleScroll, { passive: true });
-    window.addEventListener('touchmove', handleScroll, { passive: true });
 }
 
 // 갤러리 초기화
