@@ -27,6 +27,7 @@ let isFirstInteractionHandled = false;
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
+    window.scrollTo(0, 0);
     initBackgroundMusic();
     initTouchPrompt();
     loadMessages();
@@ -146,15 +147,11 @@ function initTouchPrompt() {
         // 터치 유도 화면 숨기기
         touchPrompt.classList.add('hide');
         
-        // 1초 후 음악 재생
-        setTimeout(() => {
-            startMusicAfterTouch();
-        }, 1000);
+        // 바로 음악 재생
+        startMusicAfterTouch();
         
-        // 오프닝 애니메이션 시작
-        setTimeout(() => {
-            initOpeningScenes();
-        }, 1000);
+        // 바로 오프닝 애니메이션 시작
+        initOpeningScenes();
     };
 
     touchPrompt.addEventListener('click', handleTouch);
@@ -166,16 +163,40 @@ function startMusicAfterTouch() {
     const music = document.getElementById('backgroundMusic');
     if (!music) return;
     
-    // startMusicAfterInteraction()와 동일한 로직 사용
+    // 음악이 이미 재생 중이면 중단하고 다시 시작
+    if (!music.paused) {
+        music.pause();
+        music.currentTime = 0;
+    }
+    
+    // 음소거 해제
     music.muted = false;
-    music.play().then(() => {
-        isMusicPlaying = true;
-        isFirstInteractionHandled = true;
-        updateSoundIcon(true);
-    }).catch(() => {
-        isMusicPlaying = false;
-        updateSoundIcon(false);
-    });
+    
+    // 음악 재생 시도
+    const playPromise = music.play();
+    
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            isMusicPlaying = true;
+            updateSoundIcon(true);
+        }).catch((error) => {
+            console.log('음악 재생 실패:', error);
+            // 재생 실패 시 다시 시도
+            setTimeout(() => {
+                music.play().then(() => {
+                    isMusicPlaying = true;
+                    updateSoundIcon(true);
+                }).catch(() => {
+                    isMusicPlaying = false;
+                    updateSoundIcon(false);
+                });
+            }, 100);
+        });
+    } else {
+        // Promise를 지원하지 않는 브라우저
+        isMusicPlaying = !music.paused;
+        updateSoundIcon(isMusicPlaying);
+    }
 }
 
 function initOpeningScenes() {
@@ -199,8 +220,6 @@ function initOpeningScenes() {
                 opening.classList.add('fade-out');
                 setTimeout(() => {
                     opening.style.display = 'none';
-                    // 오프닝 애니메이션 종료 후 스크롤 유도 표시
-                    showScrollIndicator();
                 }, FADE_DURATION);
             }, END_GAP);
             return;
@@ -223,69 +242,6 @@ function initOpeningScenes() {
     };
 
     playScene(0, DELAY_START);
-}
-
-// 스크롤 유도 표시
-function showScrollIndicator() {
-    const scrollIndicator = document.getElementById('scrollIndicator');
-    if (!scrollIndicator) {
-        console.log('스크롤 유도 요소를 찾을 수 없습니다.');
-        return;
-    }
-    
-    // 스크롤 위치를 맨 위로 리셋
-    window.scrollTo(0, 0);
-    
-    // 약간의 딜레이 후 표시
-    setTimeout(() => {
-        scrollIndicator.style.display = 'flex';
-        scrollIndicator.style.visibility = 'visible';
-        scrollIndicator.style.opacity = '1';
-        scrollIndicator.classList.remove('hide');
-        scrollIndicator.classList.add('show');
-        console.log('스크롤 유도 요소 표시 완료', scrollIndicator);
-        console.log('위치:', scrollIndicator.getBoundingClientRect());
-        initScrollIndicator();
-    }, 500);
-}
-
-// 스크롤 유도 이벤트 리스너
-function initScrollIndicator() {
-    const scrollIndicator = document.getElementById('scrollIndicator');
-    if (!scrollIndicator) return;
-    
-    let hasScrolled = false;
-    let isReady = false;
-    
-    // 스크롤 유도 요소가 표시된 후 1초 후부터 스크롤 감지 시작
-    setTimeout(() => {
-        isReady = true;
-    }, 1000);
-    
-    const handleScroll = () => {
-        // 준비되지 않았거나 이미 스크롤했으면 무시
-        if (!isReady || hasScrolled) return;
-        
-        // 실제 스크롤이 발생했는지 확인 (스크롤 위치가 30px 이상일 때)
-        if (window.scrollY > 30 || document.documentElement.scrollTop > 30) {
-            hasScrolled = true;
-            scrollIndicator.classList.remove('show');
-            scrollIndicator.classList.add('hide');
-            
-            // 애니메이션 완료 후 제거
-            setTimeout(() => {
-                scrollIndicator.style.display = 'none';
-            }, 500);
-            
-            // 스크롤 이벤트 리스너 제거
-            window.removeEventListener('scroll', handleScroll);
-            window.removeEventListener('wheel', handleScroll);
-        }
-    };
-    
-    // 스크롤 이벤트 리스너 추가 (touchmove 제거)
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('wheel', handleScroll, { passive: true });
 }
 
 // 갤러리 초기화

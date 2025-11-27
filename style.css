@@ -91,63 +91,6 @@ h2::after {
     text-align: center;
     position: relative;
     padding: 30px 0;
-    padding-bottom: 80px;
-}
-
-/* 스크롤 유도 */
-.scroll-indicator {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 100;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.5s ease;
-    width: 100%;
-    text-align: center;
-}
-
-.scroll-indicator.show {
-    opacity: 1 !important;
-    pointer-events: auto;
-    display: flex !important;
-    visibility: visible !important;
-}
-
-.scroll-indicator.hide {
-    opacity: 0;
-    pointer-events: none;
-}
-
-.scroll-indicator p {
-    font-size: 16px;
-    color: #333333;
-    letter-spacing: 0.05em;
-    margin: 0;
-    font-weight: 600;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
-}
-
-.scroll-arrow {
-    font-size: 28px;
-    color: #333333;
-    animation: scrollBounce 2s ease-in-out infinite;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
-}
-
-@keyframes scrollBounce {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(8px);
-    }
 }
 
 .hero-top {
@@ -159,21 +102,12 @@ h2::after {
     padding: 40px 0;
 }
 
-.main-image-wrapper {
-    position: relative;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
 .frame-3-image {
     width: auto;
     height: auto;
     max-width: none;
     max-height: none;
     margin-bottom: 20px;
-    display: block;
 }
 
 .hero-content {
