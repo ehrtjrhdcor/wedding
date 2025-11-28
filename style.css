@@ -122,7 +122,7 @@ h2::after {
 
 .frame-3-photo {
     position: absolute;
-    width: 95%;
+    width: 90%;
     height: auto;
     aspect-ratio: 360 / 485;
     object-fit: cover;
