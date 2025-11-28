@@ -1033,60 +1033,6 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// 카카오톡 공유
-function shareKakao() {
-    // 카카오 SDK를 초기화하고 사용하려면 카카오 개발자 앱 키가 필요합니다
-    // https://developers.kakao.com/ 에서 앱을 생성하고 JavaScript 키를 받으세요
-
-    if (typeof Kakao === 'undefined') {
-        showToast('카카오톡 공유 기능을 준비 중입니다');
-        return;
-    }
-
-    Kakao.Share.sendDefault({
-        objectType: 'feed',
-        content: {
-            title: '우리 결혼합니다',
-            description: '소중한 분들을 초대합니다',
-            imageUrl: window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '') + '/images/thumbnail.jpg',
-            link: {
-                mobileWebUrl: window.location.href,
-                webUrl: window.location.href
-            }
-        },
-        buttons: [
-            {
-                title: '청첩장 보기',
-                link: {
-                    mobileWebUrl: window.location.href,
-                    webUrl: window.location.href
-                }
-            }
-        ]
-    });
-}
-
-// 페이스북 공유
-function shareFacebook() {
-    const url = encodeURIComponent(window.location.href);
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
-}
-
-// URL 복사
-function copyURL() {
-    const url = window.location.href;
-
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(url).then(() => {
-            showToast('URL이 복사되었습니다');
-        }).catch(err => {
-            console.error('복사 실패:', err);
-            fallbackCopy(url);
-        });
-    } else {
-        fallbackCopy(url);
-    }
-}
 
 // 토스트 메시지 표시
 function showToast(message) {
@@ -1371,7 +1317,7 @@ function shareKakao() {
         content: {
             title: '장원석 ♡ 김한비 결혼식에 초대합니다.',
             description: '2026년 1월 11일 일요일 오전 11시 \n순천아모르웨딩컨벤션 1층 엘르홀',
-            imageUrl: 'https://ehrtjrhdcor.github.io/wedding/images/1.png',
+            imageUrl: 'https://ehrtjrhdcor.github.io/wedding/images/thumbnail.jpg',
             link: {
                 mobileWebUrl: 'https://ehrtjrhdcor.github.io/wedding/',
                 webUrl: 'https://ehrtjrhdcor.github.io/wedding/',
