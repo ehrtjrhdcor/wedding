@@ -19,7 +19,8 @@ const galleryImages = [
     'images/24.jpg',
     'images/32.jpg',
     'images/26.jpg',
-    'images/17.jpg'
+    'images/17.jpg',
+    'images/999.jpg'
 ];
 
 let isMusicPlaying = false;
