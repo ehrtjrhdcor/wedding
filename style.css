@@ -1874,6 +1874,11 @@ h3.venue-name {
     animation-delay: 0.35s;
 }
 
+/* 애니문구2-1을 아래로 내려서 2-2 바로 위에 오도록 */
+.scene-text--top {
+    margin-bottom: -20px;
+}
+
 /* 아래쪽 문구(애니문구2-2.svg): 오른쪽에서 왼쪽으로 */
 .scene--right.show .scene-text--bottom {
     animation: textRightToLeft 2s ease forwards;
@@ -1882,8 +1887,8 @@ h3.venue-name {
 
 /* 애니문구2-2 크기 더 키우기 */
 .scene-text--bottom {
-    width: 95% !important;
-    max-width: 95% !important;
+    width: 120% !important;
+    max-width: 120% !important;
 }
 
 @keyframes textLeftToRight {
