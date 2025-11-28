@@ -103,9 +103,9 @@ h2::after {
 }
 
 .frame-3-image {
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
     display: block;
     margin: 0;
     padding: 0;
