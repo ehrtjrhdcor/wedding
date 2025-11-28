@@ -102,14 +102,33 @@ h2::after {
     padding: 40px 0;
 }
 
-.frame-3-image {
+.frame-3-container {
+    position: relative;
     width: 95%;
     max-width: 95%;
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.frame-3-image {
+    width: 100%;
     height: auto;
     display: block;
     margin: 0;
     padding: 0;
     object-fit: contain;
+}
+
+.frame-3-photo {
+    position: absolute;
+    width: 342px;
+    height: 461px;
+    object-fit: cover;
+    z-index: 1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .hero-content {
