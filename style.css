@@ -103,12 +103,13 @@ h2::after {
 }
 
 .frame-3-image {
-    width: 100%;
-    max-width: 100%;
+    width: 95%;
+    max-width: 95%;
     height: auto;
     display: block;
     margin: 0;
     padding: 0;
+    object-fit: contain;
 }
 
 .hero-content {
