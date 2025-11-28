@@ -122,8 +122,8 @@ h2::after {
 
 .frame-3-photo {
     position: absolute;
-    width: 342px;
-    height: 461px;
+    width: 324px;
+    height: 437px;
     object-fit: cover;
     z-index: 1;
     top: 50%;
@@ -1906,8 +1906,9 @@ h3.venue-name {
 
 /* 애니문구2-2 크기 더 키우기 */
 .scene-text--bottom {
-    width: 120% !important;
-    max-width: 120% !important;
+    width: 110% !important;
+    max-width: 110% !important;
+    transform: translateX(-4%);
 }
 
 @keyframes textLeftToRight {
