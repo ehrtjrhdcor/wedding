@@ -1048,7 +1048,7 @@ function shareKakao() {
         content: {
             title: '우리 결혼합니다',
             description: '소중한 분들을 초대합니다',
-            imageUrl: window.location.origin + '/images/thumbnail.jpg',
+            imageUrl: window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '') + '/images/thumbnail.jpg',
             link: {
                 mobileWebUrl: window.location.href,
                 webUrl: window.location.href
