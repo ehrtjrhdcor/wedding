@@ -1,6 +1,5 @@
 // 현재 이미지 인덱스
 let currentImageIndex = 0;
-const totalImages = 9;
 
 // 방명록 수정 모드 (Firebase용 - messageId 저장)
 let editingMessageId = null;
@@ -19,8 +18,11 @@ const galleryImages = [
     'images/24.jpg',
     'images/32.jpg',
     'images/26.jpg',
-    'images/17.jpg'
+    'images/17.jpg',
+    'images/999.jpg'
 ];
+
+const totalImages = galleryImages.length;
 
 let isMusicPlaying = false;
 let isFirstInteractionHandled = false;
