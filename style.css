@@ -1846,7 +1846,8 @@ h3.venue-name {
     animation-delay: 0.35s;
 }
 
-.scene--right.show > .scene-inner > .scene-text {
+/* 두 번째 씬의 일반 텍스트 (scene-text--top, scene-text--bottom이 아닌 경우) */
+.scene--right.show > .scene-inner > .scene-text:not(.scene-text--top):not(.scene-text--bottom) {
     animation: textRightFlow 2s ease forwards;
     animation-delay: 0.35s;
 }
@@ -1858,14 +1859,14 @@ h3.venue-name {
     height: auto;
 }
 
-/* 위쪽 문구: 왼쪽에서 오른쪽으로 */
-.scene.show .scene-text--top {
+/* 위쪽 문구(애니문구2-1.svg): 왼쪽에서 오른쪽으로 */
+.scene--right.show .scene-text--top {
     animation: textLeftToRight 2s ease forwards;
     animation-delay: 0.35s;
 }
 
-/* 아래쪽 문구: 오른쪽에서 왼쪽으로 */
-.scene.show .scene-text--bottom {
+/* 아래쪽 문구(애니문구2-2.svg): 오른쪽에서 왼쪽으로 */
+.scene--right.show .scene-text--bottom {
     animation: textRightToLeft 2s ease forwards;
     animation-delay: 0.5s;
 }
