@@ -1821,6 +1821,10 @@ h3.venue-name {
     letter-spacing: 0.18em;
     text-transform: uppercase;
     opacity: 0;
+    width: 90%;
+    max-width: 90%;
+    height: auto;
+    object-fit: contain;
 }
 
 
@@ -1858,8 +1862,10 @@ h3.venue-name {
 /* 두 번째 씬 문구 이미지 */
 .scene-text--top,
 .scene-text--bottom {
-    max-width: 80%;
+    width: 90%;
+    max-width: 90%;
     height: auto;
+    object-fit: contain;
 }
 
 /* 위쪽 문구(애니문구2-1.svg): 왼쪽에서 오른쪽으로 */
@@ -1872,6 +1878,12 @@ h3.venue-name {
 .scene--right.show .scene-text--bottom {
     animation: textRightToLeft 2s ease forwards;
     animation-delay: 0.5s;
+}
+
+/* 애니문구2-2 크기 더 키우기 */
+.scene-text--bottom {
+    width: 95% !important;
+    max-width: 95% !important;
 }
 
 @keyframes textLeftToRight {
