@@ -1,5 +1,6 @@
 // 현재 이미지 인덱스
 let currentImageIndex = 0;
+const totalImages = 9;
 
 // 방명록 수정 모드 (Firebase용 - messageId 저장)
 let editingMessageId = null;
@@ -18,11 +19,8 @@ const galleryImages = [
     'images/24.jpg',
     'images/32.jpg',
     'images/26.jpg',
-    'images/17.jpg',
-    'images/999.jpg'
+    'images/17.jpg'
 ];
-
-const totalImages = galleryImages.length;
 
 let isMusicPlaying = false;
 let isFirstInteractionHandled = false;
@@ -1319,7 +1317,7 @@ function shareKakao() {
         content: {
             title: '장원석 ♡ 김한비 결혼식에 초대합니다.',
             description: '2026년 1월 11일 일요일 오전 11시 \n순천아모르웨딩컨벤션 1층 엘르홀',
-            imageUrl: 'https://ehrtjrhdcor.github.io/wedding/images/썸네일.jpg',
+            imageUrl: 'https://ehrtjrhdcor.github.io/wedding/images/thumbnail.jpg',
             link: {
                 mobileWebUrl: 'https://ehrtjrhdcor.github.io/wedding/',
                 webUrl: 'https://ehrtjrhdcor.github.io/wedding/',
